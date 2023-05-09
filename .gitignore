@@ -1,0 +1,9 @@
+
+# Ignore datasets folder, too many files
+datasets/
+models/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
