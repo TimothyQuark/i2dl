@@ -71,18 +71,27 @@ def compute_image_mean_and_std(images):
     # They are using float64 here and not just float wtffffff
     # print(type(images[0]))
 
+    # Original method, concatenate channels into new tensors and then take mean of entire
+    # tensor
+    # channel_0 = np.zeros((images[0].shape[0], images[0].shape[1], len(images)), dtype=type(images[0][0, 0, 0]))
+    # channel_1 = np.zeros((images[0].shape[0], images[0].shape[1], len(images)), dtype=type(images[0][0, 0, 0]))
+    # channel_2 = np.zeros((images[0].shape[0], images[0].shape[1], len(images)), dtype=type(images[0][0, 0, 0]))
 
-    channel_0 = np.zeros((images[0].shape[0], images[0].shape[1], len(images)), dtype=type(images[0][0, 0, 0]))
-    channel_1 = np.zeros((images[0].shape[0], images[0].shape[1], len(images)), dtype=type(images[0][0, 0, 0]))
-    channel_2 = np.zeros((images[0].shape[0], images[0].shape[1], len(images)), dtype=type(images[0][0, 0, 0]))
+    # for idx, image in enumerate(images):
+    #     channel_0[:, :, idx] = image[:, :, 0]
+    #     channel_1[:, :, idx] = image[:, :, 1]
+    #     channel_2[:, :, idx] = image[:, :, 2]
 
-    for idx, image in enumerate(images):
-        channel_0[:, :, idx] = image[:, :, 0]
-        channel_1[:, :, idx] = image[:, :, 1]
-        channel_2[:, :, idx] = image[:, :, 2]
+    # This code is slower than my original
+    # mean = [np.mean(channel_0), np.mean(channel_1), np.mean(channel_2)]
+    # std = [np.std(channel_0), np.std(channel_1), np.std(channel_2)]
 
-    mean = [np.mean(channel_0), np.mean(channel_1), np.mean(channel_2)]
-    std = [np.std(channel_0), np.std(channel_1), np.std(channel_2)]
+    # mean = np.mean(images, axis=(0,1,2))
+    # std = np.std(images, axis=(0,1,2))
+
+    # This method is fastest by far, almost half the time needed compared to above
+    mean = [np.mean(images[:, :, :, 0]), np.mean(images[:, :, :, 1]), np.mean(images[:, :, :, 2])]
+    std = [np.std(images[:, :, :, 0]), np.std(images[:, :, :, 1]), np.std(images[:, :, :, 2])]
 
     ########################################################################
     #                           END OF YOUR CODE                           #
