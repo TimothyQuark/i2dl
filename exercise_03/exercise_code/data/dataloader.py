@@ -44,13 +44,12 @@ class DataLoader:
         #     in section 1 of the notebook.                                    #
         ########################################################################
 
+        index_iterator = self.dataset
         if self.shuffle:
             index_iterator = np.random.permutation(self.dataset)
-        else:
-            index_iterator = self.dataset
+
 
         remaining_batches = len(self)
-        # print(remaining_batches)
 
         batch_indexes = []
         for index in index_iterator:
@@ -61,9 +60,9 @@ class DataLoader:
                 remaining_batches -= 1
 
         # If we don't drop last, yield whatever remains in batch_indexes
-        if remaining_batches == 1 and not self.drop_last:
+        if not self.drop_last and remaining_batches == 1:
             yield {'data' : np.array(batch_indexes)}
-            remaining_batches -= 1
+            remaining_batches = 0
 
 
 
