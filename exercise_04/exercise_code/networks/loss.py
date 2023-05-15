@@ -28,15 +28,15 @@ class L1(Loss):
 
         :param y_out: [N, ] array predicted value of your model.
         :y_truth: [N, ] array ground truth value of your training set.
-        :return: 
-            - individual_losses=False --> A single scalar, which is the mean of the binary cross entropy loss 
+        :return:
+            - individual_losses=False --> A single scalar, which is the mean of the binary cross entropy loss
                 for each sample of your training set.
             - individual_losses=True  --> [N, ] array of binary cross entropy loss for each sample of your training set.
         """
         result = None
 
         result = np.abs(y_out - y_truth)
-        
+
         if individual_losses:
             return result
         return np.mean(result)
@@ -59,7 +59,7 @@ class L1(Loss):
         gradient[zero_loc] = 0
         gradient[positive_loc] = 1
         gradient[negative_loc] = -1
-    
+
         return gradient / len(y_out)
 
 
@@ -71,15 +71,15 @@ class MSE(Loss):
 
         :param y_out: [N, ] array predicted value of your model.
         :y_truth: [N, ] array ground truth value of your training set.
-        :return: 
-            - individual_losses=False --> A single scalar, which is the mean of the binary cross entropy loss 
+        :return:
+            - individual_losses=False --> A single scalar, which is the mean of the binary cross entropy loss
                 for each sample of your training set.
             - individual_losses=True  --> [N, ] array of binary cross entropy loss for each sample of your training set.
         """
         result = None
-        
+
         result = (y_out - y_truth) ** 2
-        
+
         if individual_losses:
             return result
         return np.mean(result)
@@ -105,8 +105,8 @@ class BCE(Loss):
 
         :param y_out: [N, ] array predicted value of your model (the Logits).
         :y_truth: [N, ] array ground truth value of your training set.
-        :return: 
-            - individual_losses=False --> A single scalar, which is the mean of the binary cross entropy loss 
+        :return:
+            - individual_losses=False --> A single scalar, which is the mean of the binary cross entropy loss
                 for each sample of your training set.
             - individual_losses=True  --> [N, ] array of binary cross entropy loss for each sample of your training set.
         """
@@ -121,8 +121,13 @@ class BCE(Loss):
         #   MSE loss, and observe how the individual losses are dealt with.    #
         ########################################################################
 
+        # Calculate the sigma term for every yi, then divide everything by N, which
+        # is same as np.mean
 
-        pass
+        result = -y_truth*np.log(y_out) - (1-y_truth)*np.log(1-y_out)
+        if individual_losses:
+            return result
+        return np.mean(result)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -136,7 +141,7 @@ class BCE(Loss):
 
         :param y_out: [N, ] array predicted value of your model.
         :y_truth: [N, ] array ground truth value of your training set.
-        :return: [N, ] array of binary cross entropy loss gradients w.r.t y_out 
+        :return: [N, ] array of binary cross entropy loss gradients w.r.t y_out
                 for each sample of your training set.
         """
         gradient = None
@@ -151,8 +156,8 @@ class BCE(Loss):
         #   the batch. It is crucial for the magnitude of the gradient.        #
         ########################################################################
 
-
-        pass
+        # TODO: Don't use len(y_truth)
+        gradient = (-(y_truth / y_out) + (1-y_truth) / (1-y_out) ) / len(y_truth)
 
         ########################################################################
         #                           END OF YOUR CODE                           #

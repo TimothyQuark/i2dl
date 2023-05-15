@@ -13,7 +13,7 @@ class Optimizer(object):
     def step(self, dw):
         """
         A vanilla gradient descent step.
-        
+
         :param dw: [D+1,1] array gradient of loss w.r.t weights of your linear model
         :return weight: [D+1,1] updated weight after one step of gradient descent.
         """
@@ -26,7 +26,7 @@ class Optimizer(object):
         ########################################################################
 
 
-        pass
+        weight = weight - self.lr * dw
 
         ########################################################################
         #                           END OF YOUR CODE                           #
