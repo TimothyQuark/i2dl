@@ -97,14 +97,27 @@ class Classifier(Network):
         # x, and could be calculated with the result from the forward pass.    #
         ########################################################################
 
-        X, z = self.cache
-        # Calculate derivative of sigmoid
-        ds = z * (1 - z)
+        # X (533, 2)
+        # ds and z (533, 1)
+        # dout (533, 1)
+        # dw (2, 1)
+
         # We want each X datapoint to be multiplied by its derivative of sigmoid, to do this we
         # use numpy broadcasting. X.T has shape (3,2) and ds.T has shape (1,2), so numpy will
         # broadcast ds.T to be shape (3,2). Thus every X datapoint will be multiplied by its respective
         # scalar sigmoid derivative
-        dW = (X.T * ds.T) @ dout
+        # THIS WORKS
+        # X, z = self.cache
+        # ds = z * (1 - z)
+        # dW = (X.T * ds.T) @ dout
+
+        # Cleaner formulation that follows the chain rule
+        X, z = self.cache
+        ds = z * (1 - z)
+        # dL/dW = dY/dW * dL/dY
+        #       = dsig/ds * ds/dw * dL/dY
+        #       = X.T * ds * dout
+        dW = X.T @ (ds * dout)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
