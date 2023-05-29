@@ -19,6 +19,9 @@ class Sigmoid:
         # Implement the forward pass of Sigmoid activation function            #
         ########################################################################
 
+        out = 1 / (1 + np.exp(-x))
+        cache = out
+
         ########################################################################
         #                           END OF YOUR CODE                           #
         ########################################################################
@@ -37,6 +40,13 @@ class Sigmoid:
         # TODO:                                                                #
         # Implement the backward pass of Sigmoid activation function           #
         ########################################################################
+
+        # Sigmoid
+        z = cache
+        dz_dy = z * (1 - z)
+
+        # dy_dx = dy_ds * ds_dx
+        dx = dout * dz_dy
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -62,6 +72,10 @@ class Relu:
         # Implement the forward pass of Relu activation function               #
         ########################################################################
 
+        # All values less than or greater to 0 are set to 0
+        out = x
+        out[out <= 0] = 0
+        cache = out
         ########################################################################
         #                           END OF YOUR CODE                           #
         ########################################################################
@@ -80,6 +94,14 @@ class Relu:
         # TODO:                                                                #
         # Implement the backward pass of Relu activation function              #
         ########################################################################
+
+        # ReLU forward pass cache
+        r = cache
+        dr_dx = r
+        dr_dx[dr_dx > 0] = 1
+
+        # dy_dx = dy_dr * dr_dx
+        dx = dout * dr_dx
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -108,6 +130,12 @@ def affine_forward(x, w, b):
     # You will need to reshape the input into rows.                        #
     ########################################################################
 
+    # TODO: use tha method shown in @333, it is really good
+    for (idx, x_sample) in enumerate(x):
+        x_flat = x_sample.flatten()
+        # out[idx] = x_flat @ w + b # also works lol
+        out[idx] = x_flat.T @ w + b.T
+
     ########################################################################
     #                           END OF YOUR CODE                           #
     ########################################################################
@@ -133,6 +161,31 @@ def affine_backward(dout, cache):
     ########################################################################
     # TODO: Implement the affine backward pass.                            #
     ########################################################################
+
+    # dx = np.dot(dout, w.T)
+    # dw = np.dot(x.T, dout)
+    # db = np.sum(dout, axis = 0)
+
+    # First do the shapes of each gradient
+    N, M = dout.shape
+    D = np.prod(x.shape[1:])
+    dx = np.zeros(x.shape)
+    dw = np.zeros((D, M))
+    db = np.zeros(M)
+
+    for (idx, x_sample) in enumerate(x):
+        # Calculate dx for every sample
+        test = dout[idx] @ w.T
+        dx[idx] = test.reshape(dx.shape[1:])
+
+    # Calculate dw by reshaping x
+    x_reshape = x.reshape(N, D)
+    dw = x_reshape.T @ dout
+
+    # Calculate db
+    db = np.sum(dout, axis=0).T
+
+
 
     ########################################################################
     #                           END OF YOUR CODE                           #

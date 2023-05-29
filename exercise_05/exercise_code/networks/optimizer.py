@@ -9,7 +9,7 @@ Inputs:
   - w: A numpy array giving the current weights.
   - dw: A numpy array of the same shape as w giving the gradient of the
     loss with respect to w.
-  - config: A dictionary containing hyperparameter values such as 
+  - config: A dictionary containing hyperparameter values such as
     momentum, etc. If the update rule requires caching values over many
     iterations, then config will also hold these cached values.
 
@@ -103,7 +103,7 @@ class SGDMomentum(object):
     def _update(self, w, dw, config, lr):
         """
         Update a model parameter
-        
+
         :param w: Current weight matrix
         :param dw: The corresponding calculated gradient, of the same shape as w.
         :param config: A dictionary, containing relevant parameters, such as the "momentum" value. Check it out.
@@ -119,10 +119,16 @@ class SGDMomentum(object):
         next_w = None
 
         ########################################################################
-        # TODO: Implement the momentum update formula. Store the updated       #  
+        # TODO: Implement the momentum update formula. Store the updated       #
         # value in the next_w variable. You should also use and update the     #
         # velocity v.                                                          #
         ########################################################################
+
+        # config.get(velocity) will either get the velocity or return a zero vector of shape w
+        beta = config['momentum']
+
+        v = beta * v - lr * dw
+        next_w = w + v
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -193,7 +199,7 @@ class Adam(object):
     def _update(self, w, dw, config, lr):
         """
         Update a model parameter
-        
+
         :param w: Current weight matrix
         :param dw: The corresponding calculated gradient, of the same shape as w.
         :param config: A dictionary, containing relevant parameters, such as the "beta1" value. Check it out.
