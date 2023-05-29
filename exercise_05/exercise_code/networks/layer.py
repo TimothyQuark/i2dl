@@ -72,7 +72,7 @@ class Relu:
         # Implement the forward pass of Relu activation function               #
         ########################################################################
 
-        # All values less than or greater to 0 are set to 0
+        # All values less than or equal to 0 are set to 0
         out = x
         out[out <= 0] = 0
         cache = out
@@ -98,7 +98,7 @@ class Relu:
         # ReLU forward pass cache
         r = cache
         dr_dx = r
-        dr_dx[dr_dx > 0] = 1
+        dr_dx[dr_dx > 0] = 1 # gradient of x is simply 1
 
         # dy_dx = dy_dr * dr_dx
         dx = dout * dr_dx
@@ -130,12 +130,16 @@ def affine_forward(x, w, b):
     # You will need to reshape the input into rows.                        #
     ########################################################################
 
-    # TODO: use tha method shown in @333, it is really good
-    for (idx, x_sample) in enumerate(x):
-        x_flat = x_sample.flatten()
-        # out[idx] = x_flat @ w + b # also works lol
-        out[idx] = x_flat.T @ w + b.T
+    # # TODO: use the method shown in @333, it is really good
+    # for (idx, x_sample) in enumerate(x):
+    #     x_flat = x_sample.flatten()
+    #     # out[idx] = x_flat @ w + b # also works lol
+    #     out[idx] = x_flat.T @ w + b.T
 
+    D = np.prod(x.shape[1:])
+    x_reshaped = x.reshape((N, D))
+
+    out = x_reshaped @ w + b
     ########################################################################
     #                           END OF YOUR CODE                           #
     ########################################################################
@@ -173,10 +177,9 @@ def affine_backward(dout, cache):
     dw = np.zeros((D, M))
     db = np.zeros(M)
 
-    for (idx, x_sample) in enumerate(x):
-        # Calculate dx for every sample
-        test = dout[idx] @ w.T
-        dx[idx] = test.reshape(dx.shape[1:])
+    # Calculate dx (reshape later)
+    dx = dout @ w.T
+    dx = dx.reshape((N,*x.shape[1:]))
 
     # Calculate dw by reshaping x
     x_reshape = x.reshape(N, D)
