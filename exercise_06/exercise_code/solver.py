@@ -63,7 +63,7 @@ class Solver(object):
 
         self.train_dataloader = train_dataloader
         self.val_dataloader = val_dataloader
-        
+
         self.current_patience = 0
 
         self._reset()
@@ -148,10 +148,10 @@ class Solver(object):
 
             train_epoch_loss /= len(self.train_dataloader)
 
-            
+
             self.opt.lr *= self.lr_decay
-            
-            
+
+
             # Iterate over all validation samples
             val_epoch_loss = 0.0
 
@@ -178,10 +178,13 @@ class Solver(object):
             # Keep track of the best model
             self.update_best_loss(val_epoch_loss, train_epoch_loss)
             if patience and self.current_patience >= patience:
+
                 print("Stopping early at epoch {}!".format(t))
                 break
 
         # At the end of training swap the best params into the model
+        # Timm: modified to print best val loss
+        print("Best val loss: {}".format(min(self.val_loss_history)))
         self.model.params = self.best_params
 
     def get_dataset_accuracy(self, loader):
