@@ -185,9 +185,9 @@ class MyOwnNetwork(ClassificationNet):
     functionality! (Without renaming class functions though ;))
     """
 
-    def __init__(self, activation=Relu, num_layer=2,
-                 input_size=3 * 32 * 32, hidden_size=1200,
-                 std=1e-3, num_classes=10, reg=0, **kwargs):
+    def __init__(self, activation=LeakyRelu, num_layer=2,
+                 input_size=3 * 32 * 32, hidden_size=100,
+                 std=1e-3, num_classes=10, reg=1e-5, **kwargs):
         """
         Your network initialization. For reference and starting points, check
         out the classification network above.
@@ -199,6 +199,12 @@ class MyOwnNetwork(ClassificationNet):
         # TODO:  Your initialization here                                      #
         ########################################################################
 
+        """ Self notes:
+
+            - Keep hidden_size not too large so we can do basic overfitting with single image
+            and small dataset
+
+        """
 
         """
         :param activation: choice of activation function. It should implement
