@@ -1,0 +1,465 @@
+
+Evaluating Config #1 [of 30]:
+ {'learning_rate': 1e-05, 'reg': 1e-07}
+(Epoch 1 / 20) train loss: 2.284010; val loss: 2.249308
+(Epoch 2 / 20) train loss: 2.209761; val loss: 2.157455
+(Epoch 3 / 20) train loss: 2.116913; val loss: 2.075058
+(Epoch 4 / 20) train loss: 2.030739; val loss: 2.017103
+(Epoch 5 / 20) train loss: 1.956300; val loss: 1.978536
+(Epoch 6 / 20) train loss: 1.889933; val loss: 1.939069
+(Epoch 7 / 20) train loss: 1.827250; val loss: 1.915733
+(Epoch 8 / 20) train loss: 1.771169; val loss: 1.894853
+(Epoch 9 / 20) train loss: 1.722094; val loss: 1.884006
+(Epoch 10 / 20) train loss: 1.676665; val loss: 1.873698
+(Epoch 11 / 20) train loss: 1.633430; val loss: 1.859542
+(Epoch 12 / 20) train loss: 1.592999; val loss: 1.850893
+(Epoch 13 / 20) train loss: 1.552288; val loss: 1.849064
+(Epoch 14 / 20) train loss: 1.515378; val loss: 1.832504
+(Epoch 15 / 20) train loss: 1.478770; val loss: 1.831237
+(Epoch 16 / 20) train loss: 1.443676; val loss: 1.830684
+(Epoch 17 / 20) train loss: 1.406632; val loss: 1.823107
+(Epoch 18 / 20) train loss: 1.372706; val loss: 1.822479
+(Epoch 19 / 20) train loss: 1.337571; val loss: 1.819072
+(Epoch 20 / 20) train loss: 1.304385; val loss: 1.825512
+
+Evaluating Config #2 [of 30]:
+ {'learning_rate': 1e-05, 'reg': 1.5e-07}
+(Epoch 1 / 20) train loss: 2.284637; val loss: 2.248131
+(Epoch 2 / 20) train loss: 2.210027; val loss: 2.157070
+(Epoch 3 / 20) train loss: 2.117240; val loss: 2.072885
+(Epoch 4 / 20) train loss: 2.033935; val loss: 2.019668
+(Epoch 5 / 20) train loss: 1.960385; val loss: 1.981278
+(Epoch 6 / 20) train loss: 1.891377; val loss: 1.941136
+(Epoch 7 / 20) train loss: 1.828553; val loss: 1.912420
+(Epoch 8 / 20) train loss: 1.774388; val loss: 1.890048
+(Epoch 9 / 20) train loss: 1.721721; val loss: 1.881014
+(Epoch 10 / 20) train loss: 1.675427; val loss: 1.868226
+(Epoch 11 / 20) train loss: 1.630790; val loss: 1.850587
+(Epoch 12 / 20) train loss: 1.590780; val loss: 1.854906
+(Epoch 13 / 20) train loss: 1.550271; val loss: 1.841440
+(Epoch 14 / 20) train loss: 1.511275; val loss: 1.834447
+(Epoch 15 / 20) train loss: 1.474594; val loss: 1.827741
+(Epoch 16 / 20) train loss: 1.439109; val loss: 1.818330
+(Epoch 17 / 20) train loss: 1.402385; val loss: 1.822468
+(Epoch 18 / 20) train loss: 1.367947; val loss: 1.814076
+(Epoch 19 / 20) train loss: 1.336202; val loss: 1.823514
+(Epoch 20 / 20) train loss: 1.300786; val loss: 1.804040
+
+Evaluating Config #3 [of 30]:
+ {'learning_rate': 1e-05, 'reg': 2e-07}
+(Epoch 1 / 20) train loss: 2.285649; val loss: 2.246652
+(Epoch 2 / 20) train loss: 2.211589; val loss: 2.163279
+(Epoch 3 / 20) train loss: 2.118433; val loss: 2.078859
+(Epoch 4 / 20) train loss: 2.034088; val loss: 2.021269
+(Epoch 5 / 20) train loss: 1.956953; val loss: 1.979928
+(Epoch 6 / 20) train loss: 1.889522; val loss: 1.942856
+(Epoch 7 / 20) train loss: 1.825862; val loss: 1.920102
+(Epoch 8 / 20) train loss: 1.770789; val loss: 1.901678
+(Epoch 9 / 20) train loss: 1.720980; val loss: 1.879745
+(Epoch 10 / 20) train loss: 1.674511; val loss: 1.878772
+(Epoch 11 / 20) train loss: 1.632749; val loss: 1.871707
+(Epoch 12 / 20) train loss: 1.591073; val loss: 1.859480
+(Epoch 13 / 20) train loss: 1.551998; val loss: 1.842315
+(Epoch 14 / 20) train loss: 1.514169; val loss: 1.843392
+(Epoch 15 / 20) train loss: 1.478136; val loss: 1.835339
+(Epoch 16 / 20) train loss: 1.441857; val loss: 1.824707
+(Epoch 17 / 20) train loss: 1.406178; val loss: 1.817150
+(Epoch 18 / 20) train loss: 1.371076; val loss: 1.818133
+(Epoch 19 / 20) train loss: 1.336636; val loss: 1.813367
+(Epoch 20 / 20) train loss: 1.302321; val loss: 1.819368
+
+Evaluating Config #4 [of 30]:
+ {'learning_rate': 1e-05, 'reg': 2.5e-07}
+(Epoch 1 / 20) train loss: 2.284912; val loss: 2.250084
+(Epoch 2 / 20) train loss: 2.210515; val loss: 2.155906
+(Epoch 3 / 20) train loss: 2.115287; val loss: 2.072474
+(Epoch 4 / 20) train loss: 2.030888; val loss: 2.016371
+(Epoch 5 / 20) train loss: 1.955009; val loss: 1.971960
+(Epoch 6 / 20) train loss: 1.886774; val loss: 1.946339
+(Epoch 7 / 20) train loss: 1.825666; val loss: 1.915625
+(Epoch 8 / 20) train loss: 1.771959; val loss: 1.893782
+(Epoch 9 / 20) train loss: 1.721044; val loss: 1.891514
+(Epoch 10 / 20) train loss: 1.676410; val loss: 1.862222
+(Epoch 11 / 20) train loss: 1.631797; val loss: 1.859969
+(Epoch 12 / 20) train loss: 1.590214; val loss: 1.855202
+(Epoch 13 / 20) train loss: 1.551138; val loss: 1.842748
+(Epoch 14 / 20) train loss: 1.514774; val loss: 1.837651
+(Epoch 15 / 20) train loss: 1.476688; val loss: 1.830262
+(Epoch 16 / 20) train loss: 1.442341; val loss: 1.819530
+(Epoch 17 / 20) train loss: 1.406190; val loss: 1.828367
+(Epoch 18 / 20) train loss: 1.371453; val loss: 1.822435
+(Epoch 19 / 20) train loss: 1.335881; val loss: 1.810719
+(Epoch 20 / 20) train loss: 1.301778; val loss: 1.816580
+
+Evaluating Config #5 [of 30]:
+ {'learning_rate': 1e-05, 'reg': 3e-07}
+(Epoch 1 / 20) train loss: 2.283917; val loss: 2.249896
+(Epoch 2 / 20) train loss: 2.208385; val loss: 2.154568
+(Epoch 3 / 20) train loss: 2.114901; val loss: 2.077239
+(Epoch 4 / 20) train loss: 2.027565; val loss: 2.014073
+(Epoch 5 / 20) train loss: 1.954120; val loss: 1.977160
+(Epoch 6 / 20) train loss: 1.887015; val loss: 1.938877
+(Epoch 7 / 20) train loss: 1.824432; val loss: 1.915931
+(Epoch 8 / 20) train loss: 1.771173; val loss: 1.897486
+(Epoch 9 / 20) train loss: 1.720650; val loss: 1.881458
+(Epoch 10 / 20) train loss: 1.674503; val loss: 1.874906
+(Epoch 11 / 20) train loss: 1.632198; val loss: 1.859298
+(Epoch 12 / 20) train loss: 1.590279; val loss: 1.865509
+(Epoch 13 / 20) train loss: 1.551461; val loss: 1.844185
+(Epoch 14 / 20) train loss: 1.513382; val loss: 1.847383
+(Epoch 15 / 20) train loss: 1.476248; val loss: 1.834622
+(Epoch 16 / 20) train loss: 1.441361; val loss: 1.829845
+(Epoch 17 / 20) train loss: 1.405082; val loss: 1.824355
+(Epoch 18 / 20) train loss: 1.372333; val loss: 1.814177
+(Epoch 19 / 20) train loss: 1.336599; val loss: 1.809201
+(Epoch 20 / 20) train loss: 1.302527; val loss: 1.817429
+
+Evaluating Config #6 [of 30]:
+ {'learning_rate': 1.5e-05, 'reg': 1e-07}
+(Epoch 1 / 20) train loss: 2.271472; val loss: 2.208343
+(Epoch 2 / 20) train loss: 2.150221; val loss: 2.072333
+(Epoch 3 / 20) train loss: 2.025309; val loss: 1.993913
+(Epoch 4 / 20) train loss: 1.917234; val loss: 1.935420
+(Epoch 5 / 20) train loss: 1.826006; val loss: 1.900549
+(Epoch 6 / 20) train loss: 1.746876; val loss: 1.880821
+(Epoch 7 / 20) train loss: 1.678951; val loss: 1.848736
+(Epoch 8 / 20) train loss: 1.616673; val loss: 1.852579
+(Epoch 9 / 20) train loss: 1.558180; val loss: 1.828170
+(Epoch 10 / 20) train loss: 1.500211; val loss: 1.837631
+(Epoch 11 / 20) train loss: 1.445324; val loss: 1.819387
+(Epoch 12 / 20) train loss: 1.392640; val loss: 1.812106
+(Epoch 13 / 20) train loss: 1.341804; val loss: 1.819284
+(Epoch 14 / 20) train loss: 1.287346; val loss: 1.814137
+(Epoch 15 / 20) train loss: 1.240524; val loss: 1.803689
+(Epoch 16 / 20) train loss: 1.187079; val loss: 1.802790
+(Epoch 17 / 20) train loss: 1.139994; val loss: 1.790064
+(Epoch 18 / 20) train loss: 1.091167; val loss: 1.807374
+(Epoch 19 / 20) train loss: 1.039165; val loss: 1.801175
+(Epoch 20 / 20) train loss: 0.992150; val loss: 1.797236
+
+Evaluating Config #7 [of 30]:
+ {'learning_rate': 1.5e-05, 'reg': 1.5e-07}
+(Epoch 1 / 20) train loss: 2.272264; val loss: 2.199899
+(Epoch 2 / 20) train loss: 2.151129; val loss: 2.083216
+(Epoch 3 / 20) train loss: 2.028617; val loss: 2.003985
+(Epoch 4 / 20) train loss: 1.924082; val loss: 1.949783
+(Epoch 5 / 20) train loss: 1.831842; val loss: 1.928900
+(Epoch 6 / 20) train loss: 1.750388; val loss: 1.878807
+(Epoch 7 / 20) train loss: 1.679027; val loss: 1.867090
+(Epoch 8 / 20) train loss: 1.617821; val loss: 1.872043
+(Epoch 9 / 20) train loss: 1.557455; val loss: 1.844705
+(Epoch 10 / 20) train loss: 1.501576; val loss: 1.825619
+(Epoch 11 / 20) train loss: 1.450262; val loss: 1.824564
+(Epoch 12 / 20) train loss: 1.397727; val loss: 1.814702
+(Epoch 13 / 20) train loss: 1.340574; val loss: 1.809502
+(Epoch 14 / 20) train loss: 1.293375; val loss: 1.814714
+(Epoch 15 / 20) train loss: 1.243239; val loss: 1.818576
+(Epoch 16 / 20) train loss: 1.192703; val loss: 1.820282
+(Epoch 17 / 20) train loss: 1.142687; val loss: 1.802502
+(Epoch 18 / 20) train loss: 1.092883; val loss: 1.807457
+(Epoch 19 / 20) train loss: 1.044484; val loss: 1.802995
+(Epoch 20 / 20) train loss: 0.992365; val loss: 1.819251
+
+Evaluating Config #8 [of 30]:
+ {'learning_rate': 1.5e-05, 'reg': 2e-07}
+(Epoch 1 / 20) train loss: 2.272351; val loss: 2.207806
+(Epoch 2 / 20) train loss: 2.153158; val loss: 2.083356
+(Epoch 3 / 20) train loss: 2.029461; val loss: 1.999562
+(Epoch 4 / 20) train loss: 1.922142; val loss: 1.958657
+(Epoch 5 / 20) train loss: 1.832077; val loss: 1.907899
+(Epoch 6 / 20) train loss: 1.753644; val loss: 1.892296
+(Epoch 7 / 20) train loss: 1.683561; val loss: 1.868280
+(Epoch 8 / 20) train loss: 1.618908; val loss: 1.861273
+(Epoch 9 / 20) train loss: 1.559847; val loss: 1.836112
+(Epoch 10 / 20) train loss: 1.506885; val loss: 1.835977
+(Epoch 11 / 20) train loss: 1.452367; val loss: 1.830114
+(Epoch 12 / 20) train loss: 1.399219; val loss: 1.835185
+(Epoch 13 / 20) train loss: 1.346255; val loss: 1.815244
+(Epoch 14 / 20) train loss: 1.296099; val loss: 1.795447
+(Epoch 15 / 20) train loss: 1.245380; val loss: 1.817082
+(Epoch 16 / 20) train loss: 1.199299; val loss: 1.804477
+(Epoch 17 / 20) train loss: 1.148557; val loss: 1.807330
+(Epoch 18 / 20) train loss: 1.097021; val loss: 1.822201
+(Epoch 19 / 20) train loss: 1.048843; val loss: 1.806269
+Stopping early at epoch 18!
+
+Evaluating Config #9 [of 30]:
+ {'learning_rate': 1.5e-05, 'reg': 2.5e-07}
+(Epoch 1 / 20) train loss: 2.273966; val loss: 2.213813
+(Epoch 2 / 20) train loss: 2.156043; val loss: 2.089776
+(Epoch 3 / 20) train loss: 2.031175; val loss: 2.002853
+(Epoch 4 / 20) train loss: 1.923201; val loss: 1.944687
+(Epoch 5 / 20) train loss: 1.828878; val loss: 1.905496
+(Epoch 6 / 20) train loss: 1.752309; val loss: 1.876897
+(Epoch 7 / 20) train loss: 1.678020; val loss: 1.874581
+(Epoch 8 / 20) train loss: 1.621478; val loss: 1.846261
+(Epoch 9 / 20) train loss: 1.560698; val loss: 1.837744
+(Epoch 10 / 20) train loss: 1.502093; val loss: 1.837963
+(Epoch 11 / 20) train loss: 1.452316; val loss: 1.820212
+(Epoch 12 / 20) train loss: 1.397643; val loss: 1.820701
+(Epoch 13 / 20) train loss: 1.344239; val loss: 1.816796
+(Epoch 14 / 20) train loss: 1.297828; val loss: 1.800883
+(Epoch 15 / 20) train loss: 1.243785; val loss: 1.820965
+(Epoch 16 / 20) train loss: 1.193384; val loss: 1.804095
+(Epoch 17 / 20) train loss: 1.143953; val loss: 1.804661
+(Epoch 18 / 20) train loss: 1.094338; val loss: 1.816213
+(Epoch 19 / 20) train loss: 1.046841; val loss: 1.829816
+Stopping early at epoch 18!
+
+Evaluating Config #10 [of 30]:
+ {'learning_rate': 1.5e-05, 'reg': 3e-07}
+(Epoch 1 / 20) train loss: 2.272103; val loss: 2.210649
+(Epoch 2 / 20) train loss: 2.153031; val loss: 2.081734
+(Epoch 3 / 20) train loss: 2.033946; val loss: 1.996855
+(Epoch 4 / 20) train loss: 1.924459; val loss: 1.950594
+(Epoch 5 / 20) train loss: 1.829912; val loss: 1.909008
+(Epoch 6 / 20) train loss: 1.752814; val loss: 1.877042
+(Epoch 7 / 20) train loss: 1.684639; val loss: 1.871673
+(Epoch 8 / 20) train loss: 1.618937; val loss: 1.854932
+(Epoch 9 / 20) train loss: 1.559157; val loss: 1.848510
+(Epoch 10 / 20) train loss: 1.503893; val loss: 1.846554
+(Epoch 11 / 20) train loss: 1.450224; val loss: 1.823297
+(Epoch 12 / 20) train loss: 1.397854; val loss: 1.832829
+(Epoch 13 / 20) train loss: 1.347668; val loss: 1.811922
+(Epoch 14 / 20) train loss: 1.296345; val loss: 1.807330
+(Epoch 15 / 20) train loss: 1.244681; val loss: 1.799470
+(Epoch 16 / 20) train loss: 1.194940; val loss: 1.817963
+(Epoch 17 / 20) train loss: 1.148308; val loss: 1.806571
+(Epoch 18 / 20) train loss: 1.096103; val loss: 1.812287
+(Epoch 19 / 20) train loss: 1.047417; val loss: 1.818698
+(Epoch 20 / 20) train loss: 1.000371; val loss: 1.801530
+Stopping early at epoch 19!
+
+Evaluating Config #11 [of 30]:
+ {'learning_rate': 1.9e-05, 'reg': 1e-07}
+(Epoch 1 / 20) train loss: 2.262153; val loss: 2.181355
+(Epoch 2 / 20) train loss: 2.116988; val loss: 2.032818
+(Epoch 3 / 20) train loss: 1.975418; val loss: 1.960800
+(Epoch 4 / 20) train loss: 1.855415; val loss: 1.915316
+(Epoch 5 / 20) train loss: 1.756437; val loss: 1.871341
+(Epoch 6 / 20) train loss: 1.673080; val loss: 1.866899
+(Epoch 7 / 20) train loss: 1.597721; val loss: 1.856581
+(Epoch 8 / 20) train loss: 1.525510; val loss: 1.839456
+(Epoch 9 / 20) train loss: 1.455721; val loss: 1.835082
+(Epoch 10 / 20) train loss: 1.392234; val loss: 1.838047
+(Epoch 11 / 20) train loss: 1.326792; val loss: 1.801035
+(Epoch 12 / 20) train loss: 1.270261; val loss: 1.802653
+(Epoch 13 / 20) train loss: 1.204137; val loss: 1.812632
+(Epoch 14 / 20) train loss: 1.141200; val loss: 1.810825
+(Epoch 15 / 20) train loss: 1.075983; val loss: 1.803072
+(Epoch 16 / 20) train loss: 1.018044; val loss: 1.842548
+Stopping early at epoch 15!
+
+Evaluating Config #12 [of 30]:
+ {'learning_rate': 1.9e-05, 'reg': 1.5e-07}
+(Epoch 1 / 20) train loss: 2.266927; val loss: 2.191229
+(Epoch 2 / 20) train loss: 2.119268; val loss: 2.052946
+(Epoch 3 / 20) train loss: 1.975692; val loss: 1.962904
+(Epoch 4 / 20) train loss: 1.850835; val loss: 1.918106
+(Epoch 5 / 20) train loss: 1.750224; val loss: 1.879317
+(Epoch 6 / 20) train loss: 1.666156; val loss: 1.864920
+(Epoch 7 / 20) train loss: 1.587600; val loss: 1.856799
+(Epoch 8 / 20) train loss: 1.517111; val loss: 1.833519
+(Epoch 9 / 20) train loss: 1.446379; val loss: 1.828572
+(Epoch 10 / 20) train loss: 1.384793; val loss: 1.827937
+(Epoch 11 / 20) train loss: 1.319438; val loss: 1.827829
+(Epoch 12 / 20) train loss: 1.253435; val loss: 1.818706
+(Epoch 13 / 20) train loss: 1.191354; val loss: 1.832554
+(Epoch 14 / 20) train loss: 1.124616; val loss: 1.806725
+(Epoch 15 / 20) train loss: 1.066754; val loss: 1.811291
+(Epoch 16 / 20) train loss: 1.001462; val loss: 1.808921
+(Epoch 17 / 20) train loss: 0.944077; val loss: 1.820839
+(Epoch 18 / 20) train loss: 0.886758; val loss: 1.818105
+(Epoch 19 / 20) train loss: 0.825997; val loss: 1.837621
+Stopping early at epoch 18!
+
+Evaluating Config #13 [of 30]:
+ {'learning_rate': 1.9e-05, 'reg': 2e-07}
+(Epoch 1 / 20) train loss: 2.263841; val loss: 2.173990
+(Epoch 2 / 20) train loss: 2.116146; val loss: 2.035993
+(Epoch 3 / 20) train loss: 1.973919; val loss: 1.963121
+(Epoch 4 / 20) train loss: 1.856066; val loss: 1.895849
+(Epoch 5 / 20) train loss: 1.761732; val loss: 1.863058
+(Epoch 6 / 20) train loss: 1.668371; val loss: 1.845922
+(Epoch 7 / 20) train loss: 1.596498; val loss: 1.824379
+(Epoch 8 / 20) train loss: 1.530605; val loss: 1.836357
+(Epoch 9 / 20) train loss: 1.456333; val loss: 1.821735
+(Epoch 10 / 20) train loss: 1.392383; val loss: 1.817128
+(Epoch 11 / 20) train loss: 1.327682; val loss: 1.805408
+(Epoch 12 / 20) train loss: 1.261367; val loss: 1.814141
+(Epoch 13 / 20) train loss: 1.199027; val loss: 1.803129
+(Epoch 14 / 20) train loss: 1.132033; val loss: 1.807512
+(Epoch 15 / 20) train loss: 1.072312; val loss: 1.788426
+(Epoch 16 / 20) train loss: 1.010368; val loss: 1.832356
+(Epoch 17 / 20) train loss: 0.955510; val loss: 1.818125
+(Epoch 18 / 20) train loss: 0.894805; val loss: 1.830711
+(Epoch 19 / 20) train loss: 0.840919; val loss: 1.842084
+(Epoch 20 / 20) train loss: 0.780659; val loss: 1.811063
+Stopping early at epoch 19!
+
+Evaluating Config #14 [of 30]:
+ {'learning_rate': 1.9e-05, 'reg': 2.5e-07}
+(Epoch 1 / 20) train loss: 2.262380; val loss: 2.168455
+(Epoch 2 / 20) train loss: 2.111893; val loss: 2.053028
+(Epoch 3 / 20) train loss: 1.975050; val loss: 1.954573
+(Epoch 4 / 20) train loss: 1.854831; val loss: 1.903605
+(Epoch 5 / 20) train loss: 1.755433; val loss: 1.874583
+(Epoch 6 / 20) train loss: 1.671564; val loss: 1.855716
+(Epoch 7 / 20) train loss: 1.595218; val loss: 1.842912
+(Epoch 8 / 20) train loss: 1.522448; val loss: 1.834801
+(Epoch 9 / 20) train loss: 1.455994; val loss: 1.816221
+(Epoch 10 / 20) train loss: 1.392722; val loss: 1.828967
+(Epoch 11 / 20) train loss: 1.323358; val loss: 1.806523
+(Epoch 12 / 20) train loss: 1.264159; val loss: 1.811402
+(Epoch 13 / 20) train loss: 1.197580; val loss: 1.820328
+(Epoch 14 / 20) train loss: 1.133456; val loss: 1.790284
+(Epoch 15 / 20) train loss: 1.068960; val loss: 1.828129
+(Epoch 16 / 20) train loss: 1.010829; val loss: 1.828756
+(Epoch 17 / 20) train loss: 0.946717; val loss: 1.858527
+(Epoch 18 / 20) train loss: 0.895532; val loss: 1.858427
+(Epoch 19 / 20) train loss: 0.832833; val loss: 1.837680
+Stopping early at epoch 18!
+
+Evaluating Config #15 [of 30]:
+ {'learning_rate': 1.9e-05, 'reg': 3e-07}
+(Epoch 1 / 20) train loss: 2.266080; val loss: 2.187251
+(Epoch 2 / 20) train loss: 2.120483; val loss: 2.043023
+(Epoch 3 / 20) train loss: 1.981050; val loss: 1.950460
+(Epoch 4 / 20) train loss: 1.862397; val loss: 1.909450
+(Epoch 5 / 20) train loss: 1.763895; val loss: 1.876852
+(Epoch 6 / 20) train loss: 1.676583; val loss: 1.839165
+(Epoch 7 / 20) train loss: 1.602693; val loss: 1.834929
+(Epoch 8 / 20) train loss: 1.530543; val loss: 1.822492
+(Epoch 9 / 20) train loss: 1.464535; val loss: 1.823295
+(Epoch 10 / 20) train loss: 1.395480; val loss: 1.823155
+(Epoch 11 / 20) train loss: 1.332380; val loss: 1.806796
+(Epoch 12 / 20) train loss: 1.266535; val loss: 1.799189
+(Epoch 13 / 20) train loss: 1.203834; val loss: 1.796643
+(Epoch 14 / 20) train loss: 1.140220; val loss: 1.823449
+(Epoch 15 / 20) train loss: 1.074697; val loss: 1.794713
+(Epoch 16 / 20) train loss: 1.017585; val loss: 1.791479
+(Epoch 17 / 20) train loss: 0.954002; val loss: 1.805567
+(Epoch 18 / 20) train loss: 0.898487; val loss: 1.825836
+(Epoch 19 / 20) train loss: 0.838227; val loss: 1.828032
+(Epoch 20 / 20) train loss: 0.785915; val loss: 1.821867
+
+Evaluating Config #16 [of 30]:
+ {'learning_rate': 2e-05, 'reg': 1e-07}
+(Epoch 1 / 20) train loss: 2.259478; val loss: 2.159712
+(Epoch 2 / 20) train loss: 2.105949; val loss: 2.029525
+(Epoch 3 / 20) train loss: 1.958562; val loss: 1.954254
+(Epoch 4 / 20) train loss: 1.832755; val loss: 1.904018
+(Epoch 5 / 20) train loss: 1.729478; val loss: 1.875075
+(Epoch 6 / 20) train loss: 1.647259; val loss: 1.850183
+(Epoch 7 / 20) train loss: 1.569909; val loss: 1.834246
+(Epoch 8 / 20) train loss: 1.490396; val loss: 1.842385
+(Epoch 9 / 20) train loss: 1.424139; val loss: 1.805220
+(Epoch 10 / 20) train loss: 1.357938; val loss: 1.801777
+(Epoch 11 / 20) train loss: 1.288445; val loss: 1.793487
+(Epoch 12 / 20) train loss: 1.221055; val loss: 1.798702
+(Epoch 13 / 20) train loss: 1.156065; val loss: 1.813354
+(Epoch 14 / 20) train loss: 1.094946; val loss: 1.798404
+(Epoch 15 / 20) train loss: 1.024530; val loss: 1.802467
+(Epoch 16 / 20) train loss: 0.961616; val loss: 1.822702
+Stopping early at epoch 15!
+
+Evaluating Config #17 [of 30]:
+ {'learning_rate': 2e-05, 'reg': 1.5e-07}
+(Epoch 1 / 20) train loss: 2.262424; val loss: 2.173298
+(Epoch 2 / 20) train loss: 2.110469; val loss: 2.033663
+(Epoch 3 / 20) train loss: 1.965665; val loss: 1.952634
+(Epoch 4 / 20) train loss: 1.845214; val loss: 1.898023
+(Epoch 5 / 20) train loss: 1.741404; val loss: 1.860123
+(Epoch 6 / 20) train loss: 1.653740; val loss: 1.855956
+(Epoch 7 / 20) train loss: 1.577713; val loss: 1.850222
+(Epoch 8 / 20) train loss: 1.500613; val loss: 1.825387
+(Epoch 9 / 20) train loss: 1.429061; val loss: 1.851050
+(Epoch 10 / 20) train loss: 1.367803; val loss: 1.812419
+(Epoch 11 / 20) train loss: 1.293586; val loss: 1.818663
+(Epoch 12 / 20) train loss: 1.227709; val loss: 1.828715
+(Epoch 13 / 20) train loss: 1.161072; val loss: 1.833641
+(Epoch 14 / 20) train loss: 1.093759; val loss: 1.839563
+(Epoch 15 / 20) train loss: 1.038884; val loss: 1.784576
+(Epoch 16 / 20) train loss: 0.969166; val loss: 1.848105
+(Epoch 17 / 20) train loss: 0.908474; val loss: 1.829886
+(Epoch 18 / 20) train loss: 0.845429; val loss: 1.838395
+(Epoch 19 / 20) train loss: 0.791942; val loss: 1.873051
+(Epoch 20 / 20) train loss: 0.731641; val loss: 1.856592
+Stopping early at epoch 19!
+
+Evaluating Config #18 [of 30]:
+ {'learning_rate': 2e-05, 'reg': 2e-07}
+(Epoch 1 / 20) train loss: 2.262379; val loss: 2.178135
+(Epoch 2 / 20) train loss: 2.106093; val loss: 2.040326
+(Epoch 3 / 20) train loss: 1.958199; val loss: 1.958881
+(Epoch 4 / 20) train loss: 1.834025; val loss: 1.901974
+(Epoch 5 / 20) train loss: 1.733315; val loss: 1.872619
+(Epoch 6 / 20) train loss: 1.642536; val loss: 1.860885
+(Epoch 7 / 20) train loss: 1.562216; val loss: 1.847420
+(Epoch 8 / 20) train loss: 1.488884; val loss: 1.837486
+(Epoch 9 / 20) train loss: 1.418127; val loss: 1.806612
+(Epoch 10 / 20) train loss: 1.352187; val loss: 1.798244
+(Epoch 11 / 20) train loss: 1.280509; val loss: 1.801640
+(Epoch 12 / 20) train loss: 1.216079; val loss: 1.833210
+(Epoch 13 / 20) train loss: 1.147449; val loss: 1.796604
+(Epoch 14 / 20) train loss: 1.079527; val loss: 1.820783
+(Epoch 15 / 20) train loss: 1.017196; val loss: 1.818638
+(Epoch 16 / 20) train loss: 0.955215; val loss: 1.808629
+(Epoch 17 / 20) train loss: 0.887270; val loss: 1.820245
+(Epoch 18 / 20) train loss: 0.830096; val loss: 1.826762
+Stopping early at epoch 17!
+
+Evaluating Config #19 [of 30]:
+ {'learning_rate': 2e-05, 'reg': 2.5e-07}
+(Epoch 1 / 20) train loss: 2.258725; val loss: 2.165014
+(Epoch 2 / 20) train loss: 2.103821; val loss: 2.033590
+(Epoch 3 / 20) train loss: 1.962421; val loss: 1.936649
+(Epoch 4 / 20) train loss: 1.838680; val loss: 1.905014
+(Epoch 5 / 20) train loss: 1.738947; val loss: 1.880975
+(Epoch 6 / 20) train loss: 1.647371; val loss: 1.845343
+(Epoch 7 / 20) train loss: 1.574961; val loss: 1.841050
+(Epoch 8 / 20) train loss: 1.500892; val loss: 1.821948
+(Epoch 9 / 20) train loss: 1.427639; val loss: 1.800273
+(Epoch 10 / 20) train loss: 1.360456; val loss: 1.797186
+(Epoch 11 / 20) train loss: 1.293421; val loss: 1.796929
+(Epoch 12 / 20) train loss: 1.225344; val loss: 1.812912
+(Epoch 13 / 20) train loss: 1.159328; val loss: 1.809707
+(Epoch 14 / 20) train loss: 1.096350; val loss: 1.778329
+(Epoch 15 / 20) train loss: 1.028535; val loss: 1.833719
+(Epoch 16 / 20) train loss: 0.971065; val loss: 1.808120
+(Epoch 17 / 20) train loss: 0.906279; val loss: 1.796975
+(Epoch 18 / 20) train loss: 0.846007; val loss: 1.812924
+(Epoch 19 / 20) train loss: 0.788773; val loss: 1.794511
+Stopping early at epoch 18!
+
+Evaluating Config #20 [of 30]:
+ {'learning_rate': 2e-05, 'reg': 3e-07}
+(Epoch 1 / 20) train loss: 2.261764; val loss: 2.174758
+(Epoch 2 / 20) train loss: 2.111904; val loss: 2.048233
+(Epoch 3 / 20) train loss: 1.970831; val loss: 1.957329
+(Epoch 4 / 20) train loss: 1.846514; val loss: 1.919703
+(Epoch 5 / 20) train loss: 1.744241; val loss: 1.868058
+(Epoch 6 / 20) train loss: 1.659879; val loss: 1.867486
+(Epoch 7 / 20) train loss: 1.576651; val loss: 1.837226
+(Epoch 8 / 20) train loss: 1.504058; val loss: 1.839491
+(Epoch 9 / 20) train loss: 1.429162; val loss: 1.816214
+(Epoch 10 / 20) train loss: 1.364789; val loss: 1.814028
+(Epoch 11 / 20) train loss: 1.294695; val loss: 1.787908
+(Epoch 12 / 20) train loss: 1.229197; val loss: 1.811300
+(Epoch 13 / 20) train loss: 1.158845; val loss: 1.823526
+(Epoch 14 / 20) train loss: 1.097315; val loss: 1.825555
+(Epoch 15 / 20) train loss: 1.030002; val loss: 1.799498
+(Epoch 16 / 20) train loss: 0.966540; val loss: 1.811248
+Stopping early at epoch 15!
+
+Evaluating Config #21 [of 30]:
+ {'learning_rate': 2.5e-05, 'reg': 1e-07}
+(Epoch 1 / 20) train loss: 2.249761; val loss: 2.135756
+(Epoch 2 / 20) train loss: 2.065854; val loss: 1.995209
+(Epoch 3 / 20) train loss: 1.909943; val loss: 1.913915
+(Epoch 4 / 20) train loss: 1.778732; val loss: 1.874962
+(Epoch 5 / 20) train loss: 1.665621; val loss: 1.835991
+(Epoch 6 / 20) train loss: 1.580132; val loss: 1.868114
+(Epoch 7 / 20) train loss: 1.492078; val loss: 1.829848
+(Epoch 8 / 20) train loss: 1.402195; val loss: 1.800554
+
