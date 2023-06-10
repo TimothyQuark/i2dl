@@ -28,9 +28,7 @@ class MyPytorchModel(nn.Module):
 
         self.model = nn.Sequential(
             nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
-            nn.ReLU(),
-            nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
-            nn.ReLU(),
+            nn.LeakyReLU(0.1),
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
