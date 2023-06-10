@@ -37,7 +37,7 @@ class MyPytorchModel(nn.Module):
         self.model = nn.Sequential(
 
             # Use dropout on the input itself
-            nn.Dropout(self.hparams["input_dropout"]),
+            # nn.Dropout(self.hparams["input_dropout"]),
 
             nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
             nn.Dropout(self.hparams["hidden_dropout"]),
