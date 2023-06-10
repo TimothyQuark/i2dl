@@ -201,9 +201,9 @@ class CIFAR10DataModule(nn.Module):
             transforms.RandomApply(
                 [transforms.ColorJitter(),
                  ],
-                p=0.1
+                p=0.2
             ),
-            transforms.RandomPerspective(p=0.1),
+            transforms.RandomPerspective(p=0.2),
             transforms.ToTensor(),
             transforms.Normalize(mean, std)])
 
