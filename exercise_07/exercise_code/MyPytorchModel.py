@@ -217,9 +217,9 @@ class CIFAR10DataModule(nn.Module):
 
         # Note: you can change the splits if you want :)
         split = {
-            'train': 0.7,
+            'train': 0.75,
             'val': 0.15,
-            'test': 0.15
+            'test': 0.1
         }
         split_values = [v for k,v in split.items()]
         assert sum(split_values) == 1.0
