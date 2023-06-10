@@ -31,6 +31,8 @@ class MyPytorchModel(nn.Module):
             nn.ReLU(),
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
+            nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
+            nn.ReLU(),
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
         )
 
