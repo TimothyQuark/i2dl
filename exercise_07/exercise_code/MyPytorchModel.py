@@ -28,7 +28,7 @@ class MyPytorchModel(nn.Module):
 
         self.model = nn.Sequential(
             nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
-            nn.LeakyReLU(0.1),
+            nn.ReLU(),
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
@@ -157,19 +157,19 @@ class CIFAR10DataModule(nn.Module):
         ########################################################################
 
         # TODO: There are other transforms in torchvision.transforms, have a look at them
-        my_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
+        # my_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
 
         # For fun, I will create randomly altered images and add them to the dataset to augment it.
         # This is just a list of transforms that is applied to the dataset
-        # my_transform = transforms.Compose([
-        #     transforms.RandomApply(
-        #         [transforms.ColorJitter(),
-        #          ],
-        #         p=0.1
-        #     ),
-        #     transforms.RandomPerspective(p=0.1),
-        #     transforms.ToTensor(),
-        #     transforms.Normalize(mean, std)])
+        my_transform = transforms.Compose([
+            transforms.RandomApply(
+                [transforms.ColorJitter(),
+                 ],
+                p=0.1
+            ),
+            transforms.RandomPerspective(p=0.1),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)])
 
         ########################################################################
         #                           END OF YOUR CODE                           #
