@@ -40,11 +40,11 @@ class MyPytorchModel(nn.Module):
 
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
-            # nn.Dropout(0.5),
+            nn.Dropout(0.2),
 
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
-            # nn.Dropout(0.5),
+            nn.Dropout(0.2),
 
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
         )
