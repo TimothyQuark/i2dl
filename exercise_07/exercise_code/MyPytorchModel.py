@@ -39,10 +39,11 @@ class MyPytorchModel(nn.Module):
             # Use dropout on the input itself
             nn.Dropout(self.hparams["input_dropout"]),
 
-
-            # Hidden layers
             nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
             nn.Dropout(self.hparams["hidden_dropout"]),
+
+            # Hidden layers
+
 
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
@@ -55,6 +56,8 @@ class MyPytorchModel(nn.Module):
             # Output layer
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
         )
+
+        test = 1
 
         ########################################################################
         #                           END OF YOUR CODE                           #
