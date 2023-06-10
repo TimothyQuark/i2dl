@@ -201,7 +201,7 @@ class CIFAR10DataModule(nn.Module):
             transforms.RandomApply(
                 [transforms.ColorJitter(),
                  ],
-                p=0.2
+                p=0.1
             ),
             transforms.RandomPerspective(p=0.2),
             transforms.ToTensor(),
@@ -216,9 +216,9 @@ class CIFAR10DataModule(nn.Module):
 
         # Note: you can change the splits if you want :)
         split = {
-            'train': 0.6,
-            'val': 0.2,
-            'test': 0.2
+            'train': 0.7,
+            'val': 0.15,
+            'test': 0.15
         }
         split_values = [v for k,v in split.items()]
         assert sum(split_values) == 1.0
