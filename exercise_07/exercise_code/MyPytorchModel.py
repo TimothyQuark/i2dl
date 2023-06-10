@@ -36,9 +36,16 @@ class MyPytorchModel(nn.Module):
 
         self.model = nn.Sequential(
             nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
-            nn.Hardswish(),
+            nn.Dropout(0.2),
+
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
-            nn.Hardswish(),
+            nn.ReLU(),
+            # nn.Dropout(0.5),
+
+            nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
+            nn.ReLU(),
+            # nn.Dropout(0.5),
+
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
         )
 
