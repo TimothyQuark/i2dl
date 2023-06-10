@@ -64,7 +64,7 @@ class MyPytorchModel(nn.Module):
                 if type(model) == nn.Linear:
                     # print(model.bias)
                     torch.nn.init.kaiming_uniform_(model.weight, nonlinearity='relu')
-                    model.bias.data.fill_(0.01)
+                    # model.bias.data.fill_(0.01)
 
         # print(self.model[1].bias)
 
