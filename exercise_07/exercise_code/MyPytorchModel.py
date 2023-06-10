@@ -97,10 +97,14 @@ class MyPytorchModel(nn.Module):
         # TODO: Define your optimizer.                                         #
         ########################################################################
 
-         # TODO: use variables from hparam
-        optim = torch.optim.SGD(self.parameters(),
+        # optim = torch.optim.SGD(self.parameters(),
+        #                         lr=self.hparams['learning_rate'],
+        #                         momentum=self.hparams['momentum'])
+
+        # use all of the defaults for Adam, since same as in lecture. Maybe later play around?
+        optim = torch.optim.Adam(self.parameters(),
                                 lr=self.hparams['learning_rate'],
-                                momentum=self.hparams['momentum'])
+        )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -152,6 +156,7 @@ class CIFAR10DataModule(nn.Module):
         # If you want, you can also perform data augmentation!                 #
         ########################################################################
 
+        # TODO: There are other transforms in torchvision.transforms, have a look at them
         my_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
 
         ########################################################################
