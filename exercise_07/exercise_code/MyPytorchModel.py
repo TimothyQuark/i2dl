@@ -140,6 +140,7 @@ class MyPytorchModel(nn.Module):
         # use all of the defaults for Adam, since same as in lecture. Maybe later play around?
         optim = torch.optim.Adam(self.parameters(),
                                 lr=self.hparams['learning_rate'],
+                                weight_decay=self.hparams["weight-decay"]
         )
 
         ########################################################################
