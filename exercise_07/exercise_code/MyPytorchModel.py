@@ -39,11 +39,11 @@ class MyPytorchModel(nn.Module):
             nn.Dropout(self.hparams["input_dropout"]),
 
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
-            nn.SiLU(),
+            nn.ReLU(),
             nn.Dropout(self.hparams["hidden_dropout"]),
 
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
-            nn.SiLU(),
+            nn.ReLU(),
             nn.Dropout(self.hparams["hidden_dropout"]),
 
             nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
