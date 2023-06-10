@@ -36,7 +36,7 @@ class MyPytorchModel(nn.Module):
 
         self.model = nn.Sequential(
             nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
-            nn.Dropout(0.2),
+            nn.Dropout(0.1),
 
             nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
             nn.ReLU(),
