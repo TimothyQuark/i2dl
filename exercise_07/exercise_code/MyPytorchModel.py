@@ -59,12 +59,12 @@ class MyPytorchModel(nn.Module):
 
 
         # Initialize the weights for the linear layers
-        with torch.no_grad():
-            for model in self.model:
-                if type(model) == nn.Linear:
-                    # print(model.bias)
-                    torch.nn.init.kaiming_uniform_(model.weight, nonlinearity='relu')
-                    # model.bias.data.fill_(0.01)
+        # with torch.no_grad():
+        #     for model in self.model:
+        #         if type(model) == nn.Linear:
+        #             # print(model.bias)
+        #             torch.nn.init.kaiming_uniform_(model.weight, nonlinearity='relu')
+        #             # model.bias.data.fill_(0.01)
 
         # print(self.model[1].bias)
 
