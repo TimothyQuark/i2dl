@@ -11,7 +11,7 @@ from tqdm import tqdm
 from exercise_code.data.image_folder_dataset import MemoryImageFolderDataset
 
 class MyPytorchModel(nn.Module):
-    
+
     def __init__(self, hparams):
         super().__init__()
 
@@ -26,7 +26,13 @@ class MyPytorchModel(nn.Module):
         ########################################################################
 
 
-        pass
+        self.model = nn.Sequential(
+            nn.Linear(self.hparams["input_size"], self.hparams["n_hidden"]),
+            nn.ReLU(),
+            nn.Linear(self.hparams["n_hidden"], self.hparams["n_hidden"]),
+            nn.ReLU(),
+            nn.Linear(self.hparams["n_hidden"], self.hparams['num_classes'])
+        )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -41,7 +47,7 @@ class MyPytorchModel(nn.Module):
         x = self.model(x)
 
         return x
-    
+
     def general_step(self, batch, batch_idx, mode):
         images, targets = batch
 
@@ -55,7 +61,7 @@ class MyPytorchModel(nn.Module):
         n_correct = (targets == preds).sum()
         n_total = len(targets)
         return loss, n_correct, n_total
-    
+
     def general_end(self, outputs, mode):
         # average over all batches aggregated during one epoch
         avg_loss = torch.stack([x[mode + '_loss'] for x in outputs]).mean()
@@ -73,7 +79,7 @@ class MyPytorchModel(nn.Module):
         loss, n_correct, n_total = self.general_step(batch, batch_idx, "val")
         self.log('val_loss',loss)
         return {'val_loss': loss, 'val_n_correct':n_correct, 'val_n_total': n_total}
-    
+
     def test_step(self, batch, batch_idx):
         loss, n_correct, n_total = self.general_step(batch, batch_idx, "test")
         return {'test_loss': loss, 'test_n_correct':n_correct, 'test_n_total': n_total}
@@ -91,8 +97,10 @@ class MyPytorchModel(nn.Module):
         # TODO: Define your optimizer.                                         #
         ########################################################################
 
-
-        pass
+         # TODO: use variables from hparam
+        optim = torch.optim.SGD(self.parameters(),
+                                lr=self.hparams['learning_rate'],
+                                momentum=self.hparams['momentum'])
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -144,12 +152,12 @@ class CIFAR10DataModule(nn.Module):
         # If you want, you can also perform data augmentation!                 #
         ########################################################################
 
-        pass
+        my_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
 
         ########################################################################
         #                           END OF YOUR CODE                           #
         ########################################################################
-        
+
         # Make sure to use a consistent transform for validation/test
         train_val_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
 
@@ -161,18 +169,18 @@ class CIFAR10DataModule(nn.Module):
         }
         split_values = [v for k,v in split.items()]
         assert sum(split_values) == 1.0
-        
+
         if self.opt['loading_method'] == 'Image':
             # Set up a full dataset with the two respective transforms
             cifar_complete_augmented = torchvision.datasets.ImageFolder(root=CIFAR_ROOT, transform=my_transform)
             cifar_complete_train_val = torchvision.datasets.ImageFolder(root=CIFAR_ROOT, transform=train_val_transform)
 
-            # Instead of splitting the dataset in the beginning you can also # split using a sampler. This is not better, but we wanted to 
+            # Instead of splitting the dataset in the beginning you can also # split using a sampler. This is not better, but we wanted to
             # show it off here as an example by using the default
             # ImageFolder dataset :)
 
             # First regular splitting which we did for you before
-            N = len(cifar_complete_augmented)        
+            N = len(cifar_complete_augmented)
             num_train, num_val = int(N*split['train']), int(N*split['val'])
             indices = np.random.permutation(N)
             train_idx, val_idx, test_idx = indices[:num_train], indices[num_train:num_train+num_val], indices[num_train+num_val:]
@@ -228,7 +236,7 @@ class CIFAR10DataModule(nn.Module):
     def val_dataloader(self):
         arg_dict = self.return_dataloader_dict('val')
         return DataLoader(self.dataset["val"], **arg_dict)
-    
+
     def test_dataloader(self):
         arg_dict = self.return_dataloader_dict('train')
         return DataLoader(self.dataset["train"], **arg_dict)
