@@ -22,17 +22,24 @@ class Encoder(nn.Module):
         self.encoder = None
 
         ########################################################################
-        # TODO: Initialize your encoder!                                       #                                       
+        # TODO: Initialize your encoder!                                       #
         # Hint: You can use nn.Sequential() to define your encoder.            #
         # Possible layers: nn.Linear(), nn.BatchNorm1d(), nn.ReLU(),           #
-        # nn.Sigmoid(), nn.Tanh(), nn.LeakyReLU().                             # 
+        # nn.Sigmoid(), nn.Tanh(), nn.LeakyReLU().                             #
         # Look online for the APIs.                                            #
         # Hint: wrap them up in nn.Sequential().                               #
         # Example: nn.Sequential(nn.Linear(10, 20), nn.ReLU())                 #
         ########################################################################
 
+        self.latent_dim = self.hparams["latent_dim"]
+        self.input_size = self.hparams["input_size"]
 
-        pass
+        # TODO: Build a more sophisticated model
+        self.encoder = nn.Sequential(
+            nn.Linear(self.input_size, self.hparams["encoder_hidden"]),
+            nn.ReLU(),
+            nn.Linear(self.hparams["encoder_hidden"], self.latent_dim)
+        )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -41,6 +48,7 @@ class Encoder(nn.Module):
     def forward(self, x):
         # feed x into encoder!
         return self.encoder(x)
+
 
 class Decoder(nn.Module):
 
@@ -55,8 +63,14 @@ class Decoder(nn.Module):
         # TODO: Initialize your decoder!                                       #
         ########################################################################
 
+        # TODO: More sophisticated decoder. Should sort of mirror the encoder,
+        # hence need same input and output dimensions
 
-        pass
+        self.decoder = nn.Sequential(
+            nn.Linear(self.hparams["latent_dim"], self.hparams["decoder_hidden"]),
+            nn.ReLU(),
+            nn.Linear(self.hparams["decoder_hidden"], self.hparams["input_size"]),
+        )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -76,7 +90,8 @@ class Autoencoder(nn.Module):
         # Define models
         self.encoder = encoder
         self.decoder = decoder
-        self.device = hparams.get("device", torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+        self.device = hparams.get("device", torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"))
         self.set_optimizer()
 
     def forward(self, x):
@@ -87,7 +102,8 @@ class Autoencoder(nn.Module):
         #  of the input.                                                       #
         ########################################################################
 
-        pass
+        encoder_out = self.encoder(x)
+        reconstruction = self.decoder(encoder_out)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -101,7 +117,11 @@ class Autoencoder(nn.Module):
         # TODO: Define your optimizer.                                         #
         ########################################################################
 
-        pass
+        # TODO: Set autoencoder and classifier to have their own optimization parameters
+        self.optimizer = torch.optim.Adam(self.parameters(),
+                                 lr=self.hparams['learning_rate'],
+                                 weight_decay=self.hparams["weight_decay"]
+                                 )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -109,7 +129,7 @@ class Autoencoder(nn.Module):
 
     def training_step(self, batch, loss_func):
         """
-        This function is called for every batch of data during training. 
+        This function is called for every batch of data during training.
         It should return the loss for the batch.
         """
         loss = None
@@ -129,11 +149,24 @@ class Autoencoder(nn.Module):
         # Don't forget to reshape the input, so it fits fully connected layers.#
         #                                                                      #
         # Hint 4:                                                              #
-        # Don't forget to move the data to the correct device!                 #                                     
+        # Don't forget to move the data to the correct device!                 #
         ########################################################################
 
+        # Set model to train
+        self.encoder.train()
+        self.decoder.train()
+        # TODO: can I just use self.train() ?
 
-        pass
+        self.optimizer.zero_grad() # Reset the gradients for every batch
+        images = batch # Get images and labels from batch
+        images = images.to(self.device) # Send data to device, set images and labels to device data
+
+        images = images.view(images.shape[0], -1) # Flatten images
+
+        pred = self.forward(images) # Stage 1: Forward
+        loss = loss_func(pred, images) # Compute loss over predictions and ground truth
+        loss.backward() # Stage 2: Backward
+        self.optimizer.step() # Stage 3: Update parameters
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -156,8 +189,20 @@ class Autoencoder(nn.Module):
         # from the notebook.                                                   #
         ########################################################################
 
+        # Set model to eval
+        self.encoder.eval()
+        self.decoder.eval()
+        # TODO: Can i just use self.eval() ?
 
-        pass
+        loss = 0
+        with torch.no_grad():
+            images = batch
+            images = images.to(self.device)
+
+            images = images.view(images.shape[0], -1)
+            pred = self.forward(images)
+            loss = loss_func(pred, images)
+
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -191,17 +236,24 @@ class Classifier(nn.Module):
         self.hparams = hparams
         self.encoder = encoder
         self.model = nn.Identity()
-        self.device = hparams.get("device", torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+        self.device = hparams.get("device", torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"))
         self.set_optimizer()
-        
+
         ########################################################################
         # TODO:                                                                #
-        # Given an Encoder, finalize your classifier, by adding a classifier   #   
-        # block of fully connected layers.                                     #                                                             
+        # Given an Encoder, finalize your classifier, by adding a classifier   #
+        # block of fully connected layers.                                     #
         ########################################################################
 
 
-        pass
+        # TODO: More sophisticated classifier? But really encoder should be doing the work
+        self.model == nn.Sequential(
+            nn.Linear(encoder.latent_dim, self.hparams["classifier_hidden"]),
+            nn.ReLU(),
+            nn.Linear(self.hparams["classifier_hidden"],
+                      self.hparams["num_classes"])
+        )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -213,27 +265,29 @@ class Classifier(nn.Module):
         return x
 
     def set_optimizer(self):
-        
+
         self.optimizer = None
         ########################################################################
         # TODO: Implement your optimizer. Send it to the classifier parameters #
         # and the relevant learning rate (from self.hparams)                   #
         ########################################################################
 
-
-        pass
+        self.optimizer = torch.optim.Adam(self.parameters(),
+                                 lr=self.hparams['learning_rate'],
+                                 weight_decay=self.hparams["weight_decay"]
+                                 )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
         ########################################################################
 
     def getAcc(self, loader=None):
-        
+
         assert loader is not None, "Please provide a dataloader for accuracy evaluation"
 
         self.eval()
         self = self.to(self.device)
-            
+
         scores = []
         labels = []
 
