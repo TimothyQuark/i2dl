@@ -76,10 +76,16 @@ class Decoder(nn.Module):
         # hence need same input and output dimensions
 
         self.decoder = nn.Sequential(
+
             nn.Linear(self.hparams["latent_dim"], self.hparams["decoder_hidden"]),
             nn.BatchNorm1d(self.hparams["decoder_hidden"]),
             nn.ReLU(),
             nn.Dropout(self.hparams["dropout_p"]),
+
+            # nn.Linear(self.hparams["decoder_hidden"], self.hparams["decoder_hidden"] // 2),
+            # nn.BatchNorm1d(self.hparams["decoder_hidden"] // 2),
+            # nn.ReLU(),
+            # nn.Dropout(self.hparams["dropout_p"]),
 
             nn.Linear(self.hparams["decoder_hidden"], self.hparams["input_size"]),
             # nn.Softmax()
