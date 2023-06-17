@@ -34,11 +34,20 @@ class Encoder(nn.Module):
         self.latent_dim = self.hparams["latent_dim"]
         self.input_size = self.hparams["input_size"]
 
-        # TODO: Build a more sophisticated model
+        # More layers seems to result in less overfitting, and better accuracy. 2 layers seems best
         self.encoder = nn.Sequential(
+
             nn.Linear(self.input_size, self.hparams["encoder_hidden"]),
+            nn.BatchNorm1d(self.hparams["encoder_hidden"]),
             nn.ReLU(),
-            nn.Linear(self.hparams["encoder_hidden"], self.latent_dim)
+            nn.Dropout(self.hparams["dropout_p"]),
+
+            nn.Linear(self.hparams["encoder_hidden"], self.hparams["encoder_hidden"] // 2),
+            nn.BatchNorm1d(self.hparams["encoder_hidden"] // 2),
+            nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
+            nn.Linear(self.hparams["encoder_hidden"] // 2, self.latent_dim),
         )
 
         ########################################################################
@@ -68,8 +77,12 @@ class Decoder(nn.Module):
 
         self.decoder = nn.Sequential(
             nn.Linear(self.hparams["latent_dim"], self.hparams["decoder_hidden"]),
+            nn.BatchNorm1d(self.hparams["decoder_hidden"]),
             nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
             nn.Linear(self.hparams["decoder_hidden"], self.hparams["input_size"]),
+            # nn.Softmax()
         )
 
         ########################################################################
@@ -102,8 +115,8 @@ class Autoencoder(nn.Module):
         #  of the input.                                                       #
         ########################################################################
 
-        encoder_out = self.encoder(x)
-        reconstruction = self.decoder(encoder_out)
+        reconstruction = self.encoder(x)
+        reconstruction = self.decoder(reconstruction)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -164,7 +177,9 @@ class Autoencoder(nn.Module):
         images = images.view(images.shape[0], -1) # Flatten images
 
         pred = self.forward(images) # Stage 1: Forward
-        loss = loss_func(pred, images) # Compute loss over predictions and ground truth
+        # Compute loss. Since AE is trying to reconstruct original data (i.e. forward is encoder and decoder forward passes),
+        # this is loss between original imager and prediction
+        loss = loss_func(pred, images)
         loss.backward() # Stage 2: Backward
         self.optimizer.step() # Stage 3: Update parameters
 
@@ -201,6 +216,8 @@ class Autoencoder(nn.Module):
 
             images = images.view(images.shape[0], -1)
             pred = self.forward(images)
+            # Compute loss. Since AE is trying to reconstruct original data (i.e. forward is encoder and decoder forward passes),
+            # this is loss between original imager and prediction
             loss = loss_func(pred, images)
 
 
@@ -247,12 +264,22 @@ class Classifier(nn.Module):
         ########################################################################
 
 
-        # TODO: More sophisticated classifier? But really encoder should be doing the work
+        # Noticed that my classifier often overfit training data, so using dropouts
         self.model == nn.Sequential(
             nn.Linear(encoder.latent_dim, self.hparams["classifier_hidden"]),
+            nn.BatchNorm1d(self.hparams["classifier_hidden"]),
             nn.ReLU(),
-            nn.Linear(self.hparams["classifier_hidden"],
-                      self.hparams["num_classes"])
+            nn.Dropout(self.hparams["dropout_p"]),
+
+            nn.Linear(self.hparams["classifier_hidden"], self.hparams["classifier_hidden"] // 2),
+            nn.BatchNorm1d(self.hparams["classifier_hidden"] // 2),
+            nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
+
+            nn.Linear(self.hparams["classifier_hidden"] // 2,
+                      self.hparams["num_classes"]),
+            # nn.Softmax()
         )
 
         ########################################################################
