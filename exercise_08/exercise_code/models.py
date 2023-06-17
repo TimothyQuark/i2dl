@@ -38,16 +38,11 @@ class Encoder(nn.Module):
         self.encoder = nn.Sequential(
 
             nn.Linear(self.input_size, self.hparams["encoder_hidden"]),
-            nn.BatchNorm1d(self.hparams["encoder_hidden"]),
+            # nn.BatchNorm1d(self.hparams["encoder_hidden"]),
             nn.ReLU(),
-            nn.Dropout(self.hparams["dropout_p"]),
+            # nn.Dropout(self.hparams["dropout_p"]),
 
-            nn.Linear(self.hparams["encoder_hidden"], self.hparams["encoder_hidden"] // 2),
-            nn.BatchNorm1d(self.hparams["encoder_hidden"] // 2),
-            nn.ReLU(),
-            nn.Dropout(self.hparams["dropout_p"]),
-
-            nn.Linear(self.hparams["encoder_hidden"] // 2, self.latent_dim),
+            nn.Linear(self.hparams["encoder_hidden"], self.latent_dim)
         )
 
         ########################################################################
@@ -76,19 +71,11 @@ class Decoder(nn.Module):
         # hence need same input and output dimensions
 
         self.decoder = nn.Sequential(
-
             nn.Linear(self.hparams["latent_dim"], self.hparams["decoder_hidden"]),
-            nn.BatchNorm1d(self.hparams["decoder_hidden"]),
+            # nn.BatchNorm1d(self.hparams["decoder_hidden"]),
             nn.ReLU(),
-            nn.Dropout(self.hparams["dropout_p"]),
-
-            # nn.Linear(self.hparams["decoder_hidden"], self.hparams["decoder_hidden"] // 2),
-            # nn.BatchNorm1d(self.hparams["decoder_hidden"] // 2),
-            # nn.ReLU(),
-            # nn.Dropout(self.hparams["dropout_p"]),
-
             nn.Linear(self.hparams["decoder_hidden"], self.hparams["input_size"]),
-            # nn.Softmax()
+            # nn.Dropout(self.hparams["dropout_p"]),
         )
 
         ########################################################################
@@ -269,24 +256,16 @@ class Classifier(nn.Module):
         # block of fully connected layers.                                     #
         ########################################################################
 
-
-        # Noticed that my classifier often overfit training data, so using dropouts
         self.model == nn.Sequential(
             nn.Linear(encoder.latent_dim, self.hparams["classifier_hidden"]),
-            nn.BatchNorm1d(self.hparams["classifier_hidden"]),
+            # nn.BatchNorm1d(self.hparams["classifier_hidden"]),
             nn.ReLU(),
-            nn.Dropout(self.hparams["dropout_p"]),
+            # nn.Dropout(self.hparams["dropout_p"]),
 
-            nn.Linear(self.hparams["classifier_hidden"], self.hparams["classifier_hidden"] // 2),
-            nn.BatchNorm1d(self.hparams["classifier_hidden"] // 2),
-            nn.ReLU(),
-            nn.Dropout(self.hparams["dropout_p"]),
-
-
-            nn.Linear(self.hparams["classifier_hidden"] // 2,
-                      self.hparams["num_classes"]),
-            # nn.Softmax()
+            nn.Linear(self.hparams["classifier_hidden"],
+                      self.hparams["num_classes"])
         )
+
 
         ########################################################################
         #                           END OF YOUR CODE                           #
