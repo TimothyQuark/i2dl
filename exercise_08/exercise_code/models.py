@@ -288,7 +288,11 @@ class Classifier(nn.Module):
             nn.ReLU(),
             nn.Dropout(self.hparams["dropout_p"]),
 
-            nn.Linear(self.hparams["classifier_hidden"],
+            nn.Linear(self.hparams["classifier_hidden"], self.hparams["classifier_hidden"] // 2),
+            nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
+            nn.Linear(self.hparams["classifier_hidden"] // 2,
                       self.hparams["num_classes"])
         )
 
