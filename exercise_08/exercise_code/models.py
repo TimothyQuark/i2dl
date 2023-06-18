@@ -40,10 +40,24 @@ class Encoder(nn.Module):
             nn.Linear(self.input_size, self.hparams["encoder_hidden"]),
             # nn.BatchNorm1d(self.hparams["encoder_hidden"]),
             nn.ReLU(),
-            # nn.Dropout(self.hparams["dropout_p"]),
+            nn.Dropout(self.hparams["dropout_p"]),
 
-            nn.Linear(self.hparams["encoder_hidden"], self.latent_dim)
+            nn.Linear(self.hparams["encoder_hidden"],  self.hparams["encoder_hidden"] // 2),
+            # nn.BatchNorm1d(self.hparams["encoder_hidden"] // 2),
+            nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
+            nn.Linear(self.hparams["encoder_hidden"] // 2, self.latent_dim)
         )
+
+        # Initialize the weights for the linear layers
+        with torch.no_grad():
+            for model in self.encoder:
+                if type(model) == nn.Linear:
+                    # print(model.bias)
+                    torch.nn.init.kaiming_uniform_(
+                        model.weight, nonlinearity='relu')
+                    # model.bias.data.fill_(0.01)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -71,12 +85,25 @@ class Decoder(nn.Module):
         # hence need same input and output dimensions
 
         self.decoder = nn.Sequential(
-            nn.Linear(self.hparams["latent_dim"], self.hparams["decoder_hidden"]),
-            # nn.BatchNorm1d(self.hparams["decoder_hidden"]),
+            nn.Linear(self.hparams["latent_dim"], self.hparams["decoder_hidden"] // 2),
             nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
+            nn.Linear(self.hparams["decoder_hidden"] // 2, self.hparams["decoder_hidden"]),
+            nn.ReLU(),
+            nn.Dropout(self.hparams["dropout_p"]),
+
             nn.Linear(self.hparams["decoder_hidden"], self.hparams["input_size"]),
-            # nn.Dropout(self.hparams["dropout_p"]),
         )
+
+        # Initialize the weights for the linear layers
+        with torch.no_grad():
+            for model in self.decoder:
+                if type(model) == nn.Linear:
+                    # print(model.bias)
+                    torch.nn.init.kaiming_uniform_(
+                        model.weight, nonlinearity='relu')
+                    # model.bias.data.fill_(0.01)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -125,9 +152,9 @@ class Autoencoder(nn.Module):
 
         # TODO: Set autoencoder and classifier to have their own optimization parameters
         self.optimizer = torch.optim.Adam(self.parameters(),
-                                 lr=self.hparams['learning_rate'],
-                                 weight_decay=self.hparams["weight_decay"]
-                                 )
+                                          lr=self.hparams['learning_rate'],
+                                          weight_decay=self.hparams["weight_decay"]
+                                          )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -163,18 +190,19 @@ class Autoencoder(nn.Module):
         self.decoder.train()
         # TODO: can I just use self.train() ?
 
-        self.optimizer.zero_grad() # Reset the gradients for every batch
-        images = batch # Get images and labels from batch
-        images = images.to(self.device) # Send data to device, set images and labels to device data
+        self.optimizer.zero_grad()  # Reset the gradients for every batch
+        images = batch  # Get images and labels from batch
+        # Send data to device, set images and labels to device data
+        images = images.to(self.device)
 
-        images = images.view(images.shape[0], -1) # Flatten images
+        images = images.view(images.shape[0], -1)  # Flatten images
 
-        pred = self.forward(images) # Stage 1: Forward
+        pred = self.forward(images)  # Stage 1: Forward
         # Compute loss. Since AE is trying to reconstruct original data (i.e. forward is encoder and decoder forward passes),
         # this is loss between original imager and prediction
         loss = loss_func(pred, images)
-        loss.backward() # Stage 2: Backward
-        self.optimizer.step() # Stage 3: Update parameters
+        loss.backward()  # Stage 2: Backward
+        self.optimizer.step()  # Stage 3: Update parameters
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -212,7 +240,6 @@ class Autoencoder(nn.Module):
             # Compute loss. Since AE is trying to reconstruct original data (i.e. forward is encoder and decoder forward passes),
             # this is loss between original imager and prediction
             loss = loss_func(pred, images)
-
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -256,16 +283,23 @@ class Classifier(nn.Module):
         # block of fully connected layers.                                     #
         ########################################################################
 
-        self.model == nn.Sequential(
+        self.model = nn.Sequential(
             nn.Linear(encoder.latent_dim, self.hparams["classifier_hidden"]),
-            # nn.BatchNorm1d(self.hparams["classifier_hidden"]),
             nn.ReLU(),
-            # nn.Dropout(self.hparams["dropout_p"]),
+            nn.Dropout(self.hparams["dropout_p"]),
 
             nn.Linear(self.hparams["classifier_hidden"],
                       self.hparams["num_classes"])
         )
 
+        # Initialize the weights for the linear layers
+        with torch.no_grad():
+            for model in self.model:
+                if type(model) == nn.Linear:
+                    # print(model.bias)
+                    torch.nn.init.kaiming_uniform_(
+                        model.weight, nonlinearity='relu')
+                    # model.bias.data.fill_(0.01)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -285,9 +319,9 @@ class Classifier(nn.Module):
         ########################################################################
 
         self.optimizer = torch.optim.Adam(self.parameters(),
-                                 lr=self.hparams['learning_rate'],
-                                 weight_decay=self.hparams["weight_decay"]
-                                 )
+                                          lr=self.hparams['learning_rate'],
+                                          weight_decay=self.hparams["weight_decay"]
+                                          )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
