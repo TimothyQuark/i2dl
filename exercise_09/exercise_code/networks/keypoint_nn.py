@@ -3,6 +3,18 @@
 import torch
 import torch.nn as nn
 
+# Timm helper functions
+
+# Output dimensions of maxpool layer
+def dim_out_maxpool(input_dim, kernel, stride=None, padding=0, dilation=1):
+    if stride == None:
+        stride = kernel
+    return (input_dim + 2 * padding - dilation * (kernel - 1) - 1) // stride + 1
+
+# Output dimensions of convolution layer
+def dim_out_conv(input_dim, kernel, stride=1, padding=0, dilation=1):
+    return (input_dim + 2 * padding - dilation *( kernel -1 ) - 1) // stride + 1
+
 class KeypointModel(nn.Module):
     """Facial keypoint detection model"""
     def __init__(self, hparams):
@@ -34,7 +46,7 @@ class KeypointModel(nn.Module):
         ########################################################################
 
 
-
+        # TODO: Weight initialization and batchnorms
 
         self.device = hparams.get("device", torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"))
@@ -43,16 +55,140 @@ class KeypointModel(nn.Module):
         # TODO: maxpooling, dropout, init weights for linear layer, batchnorm
         # TODO: Probably a good idea to rescale input too be much smaller so we can have more layers. Use maxpool straight away?
 
-        # Calculate input dimensions of linear layer. Needs to be of type int
-        dim = (self.hparams['input_size'] + 2 * self.hparams['conv1_padding'] - self.hparams['conv1_kernel'] ) // self.hparams['conv1_stride'] + 1
-        self.model = nn.Sequential(
-            nn.Conv2d(
-                in_channels=1, out_channels=self.hparams['conv1_out_channels'], kernel_size=self.hparams['conv1_kernel'],
-                stride=self.hparams['conv1_stride'], padding=self.hparams['conv1_padding'], bias=True),
-            nn.ReLU(),
+        # Calculate out dimensions of input maxpool
+        dim_out_maxin = dim_out_maxpool(
+            input_dim=self.hparams['input_size'],
+            kernel=self.hparams['input_pool_kernel'],
+            stride=None,
+            padding=self.hparams['input_pool_padding']
+        )
 
+        # Calculate out dimension of first convolution layer
+        dim_out_conv1 = dim_out_conv(input_dim=dim_out_maxin,
+                                     kernel=self.hparams['conv1_kernel'],
+                                     stride=self.hparams['conv1_stride'],
+                                     padding=self.hparams['conv1_padding'])
+        dim_out_max1 = dim_out_maxpool(
+            input_dim=dim_out_conv1,
+            kernel=self.hparams['conv1_pooling_kernel'],
+        )
+
+        # Calculate out dimension of second convolution layer
+        dim_out_conv2 = dim_out_conv(input_dim=dim_out_max1,
+                                     kernel=self.hparams['conv2_kernel'],
+                                     stride=self.hparams['conv2_stride'],
+                                     padding=self.hparams['conv2_padding'])
+        dim_out_max2 = dim_out_maxpool(
+            input_dim=dim_out_conv2,
+            kernel=self.hparams['conv2_pooling_kernel'],
+        )
+
+        # Calculate out dimension of third convolution layer
+        dim_out_conv3 = dim_out_conv(input_dim=dim_out_max2,
+                                     kernel=self.hparams['conv3_kernel'],
+                                     stride=self.hparams['conv3_stride'],
+                                     padding=self.hparams['conv3_padding'])
+        dim_out_max3 = dim_out_maxpool(
+            input_dim=dim_out_conv3,
+            kernel=self.hparams['conv3_pooling_kernel'],
+        )
+
+
+        # Calculate out dimension of fourth convolution layer
+        dim_out_conv4 = dim_out_conv(input_dim=dim_out_max3,
+                                     kernel=self.hparams['conv4_kernel'],
+                                     stride=self.hparams['conv4_stride'],
+                                     padding=self.hparams['conv4_padding'])
+        dim_out_max4 = dim_out_maxpool(
+            input_dim=dim_out_conv4,
+            kernel=self.hparams['conv4_pooling_kernel'],
+        )
+
+
+        # Model loosely based on https://arxiv.org/pdf/1710.00977.pdf
+
+        self.model = nn.Sequential(
+
+            # Because we have a limited num of parameters, we will need to maxpool the input already
+            nn.MaxPool2d(
+                kernel_size=self.hparams['input_pool_kernel'],
+                stride=None,
+                padding=self.hparams['input_pool_padding']
+            ),
+
+            # Layer 1
+            nn.Conv2d(
+                in_channels=1, out_channels=self.hparams['conv1_out_channels'],
+                kernel_size=self.hparams['conv1_kernel'],
+                stride=self.hparams['conv1_stride'],
+                padding=self.hparams['conv1_padding']
+            ),
+            nn.ELU(),
+            nn.MaxPool2d(
+                kernel_size=self.hparams['conv1_pooling_kernel'],
+                stride=None,
+                padding=0
+            ),
+            nn.Dropout(p=self.hparams['conv1_dropout']),
+
+            # Layer 2
+            nn.Conv2d(
+                in_channels=self.hparams['conv1_out_channels'], out_channels=self.hparams['conv2_out_channels'],
+                kernel_size=self.hparams['conv2_kernel'],
+                stride=self.hparams['conv2_stride'],
+                padding=self.hparams['conv2_padding']
+            ),
+            nn.ELU(),
+            nn.MaxPool2d(
+                kernel_size=self.hparams['conv2_pooling_kernel'],
+                stride=None,
+                padding=0
+            ),
+            nn.Dropout(p=self.hparams['conv2_dropout']),
+
+            # Layer 3
+            nn.Conv2d(
+                in_channels=self.hparams['conv2_out_channels'], out_channels=self.hparams['conv3_out_channels'],
+                kernel_size=self.hparams['conv3_kernel'],
+                stride=self.hparams['conv3_stride'],
+                padding=self.hparams['conv3_padding']
+            ),
+            nn.ELU(),
+            nn.MaxPool2d(
+                kernel_size=self.hparams['conv3_pooling_kernel'],
+                stride=None,
+                padding=0
+            ),
+            nn.Dropout(p=self.hparams['conv3_dropout']),
+
+            # Layer 4
+            nn.Conv2d(
+                in_channels=self.hparams['conv3_out_channels'], out_channels=self.hparams['conv4_out_channels'],
+                kernel_size=self.hparams['conv4_kernel'],
+                stride=self.hparams['conv4_stride'],
+                padding=self.hparams['conv4_padding']
+            ),
+            nn.ELU(),
+            nn.MaxPool2d(
+                kernel_size=self.hparams['conv4_pooling_kernel'],
+                stride=None,
+                padding=0
+            ),
+            nn.Dropout(p=self.hparams['conv4_dropout']),
+
+            # Linear layers
             nn.Flatten(),
-            nn.Linear( dim * dim * self.hparams['conv1_out_channels'], self.hparams['output_size'])
+
+            nn.Linear( dim_out_max4 * dim_out_max4 * self.hparams['conv4_out_channels'], self.hparams['linear_weights']),
+            nn.ELU(),
+            nn.Dropout(p=0.5),
+
+            nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
+            nn.ELU(),
+            nn.Dropout(p=0.6),
+
+            # Final output layer
+            nn.Linear( self.hparams['linear_weights'], self.hparams['output_size'])
         )
 
         # Believe you need to set the optimizer after the network has been defined, else self.parameters()
