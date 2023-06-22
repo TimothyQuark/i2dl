@@ -74,35 +74,35 @@ class KeypointModel(nn.Module):
         )
 
         # Calculate out dimension of second convolution layer
-        dim_out_conv2 = dim_out_conv(input_dim=dim_out_max1,
-                                     kernel=self.hparams['conv2_kernel'],
-                                     stride=self.hparams['conv2_stride'],
-                                     padding=self.hparams['conv2_padding'])
-        dim_out_max2 = dim_out_maxpool(
-            input_dim=dim_out_conv2,
-            kernel=self.hparams['conv2_pooling_kernel'],
-        )
+        # dim_out_conv2 = dim_out_conv(input_dim=dim_out_max1,
+        #                              kernel=self.hparams['conv2_kernel'],
+        #                              stride=self.hparams['conv2_stride'],
+        #                              padding=self.hparams['conv2_padding'])
+        # dim_out_max2 = dim_out_maxpool(
+        #     input_dim=dim_out_conv2,
+        #     kernel=self.hparams['conv2_pooling_kernel'],
+        # )
 
         # Calculate out dimension of third convolution layer
-        dim_out_conv3 = dim_out_conv(input_dim=dim_out_max2,
-                                     kernel=self.hparams['conv3_kernel'],
-                                     stride=self.hparams['conv3_stride'],
-                                     padding=self.hparams['conv3_padding'])
-        dim_out_max3 = dim_out_maxpool(
-            input_dim=dim_out_conv3,
-            kernel=self.hparams['conv3_pooling_kernel'],
-        )
+        # dim_out_conv3 = dim_out_conv(input_dim=dim_out_max2,
+        #                              kernel=self.hparams['conv3_kernel'],
+        #                              stride=self.hparams['conv3_stride'],
+        #                              padding=self.hparams['conv3_padding'])
+        # dim_out_max3 = dim_out_maxpool(
+        #     input_dim=dim_out_conv3,
+        #     kernel=self.hparams['conv3_pooling_kernel'],
+        # )
 
 
         # Calculate out dimension of fourth convolution layer
-        dim_out_conv4 = dim_out_conv(input_dim=dim_out_max3,
-                                     kernel=self.hparams['conv4_kernel'],
-                                     stride=self.hparams['conv4_stride'],
-                                     padding=self.hparams['conv4_padding'])
-        dim_out_max4 = dim_out_maxpool(
-            input_dim=dim_out_conv4,
-            kernel=self.hparams['conv4_pooling_kernel'],
-        )
+        # dim_out_conv4 = dim_out_conv(input_dim=dim_out_max3,
+        #                              kernel=self.hparams['conv4_kernel'],
+        #                              stride=self.hparams['conv4_stride'],
+        #                              padding=self.hparams['conv4_padding'])
+        # dim_out_max4 = dim_out_maxpool(
+        #     input_dim=dim_out_conv4,
+        #     kernel=self.hparams['conv4_pooling_kernel'],
+        # )
 
 
         # Model loosely based on https://arxiv.org/pdf/1710.00977.pdf
@@ -123,6 +123,7 @@ class KeypointModel(nn.Module):
                 stride=self.hparams['conv1_stride'],
                 padding=self.hparams['conv1_padding']
             ),
+            # nn.BatchNorm2d(self.hparams['conv1_out_channels']),
             nn.ELU(),
             nn.MaxPool2d(
                 kernel_size=self.hparams['conv1_pooling_kernel'],
@@ -132,68 +133,82 @@ class KeypointModel(nn.Module):
             nn.Dropout(p=self.hparams['conv1_dropout']),
 
             # Layer 2
-            nn.Conv2d(
-                in_channels=self.hparams['conv1_out_channels'], out_channels=self.hparams['conv2_out_channels'],
-                kernel_size=self.hparams['conv2_kernel'],
-                stride=self.hparams['conv2_stride'],
-                padding=self.hparams['conv2_padding']
-            ),
-            nn.ELU(),
-            nn.MaxPool2d(
-                kernel_size=self.hparams['conv2_pooling_kernel'],
-                stride=None,
-                padding=0
-            ),
-            nn.Dropout(p=self.hparams['conv2_dropout']),
+            # nn.Conv2d(
+            #     in_channels=self.hparams['conv1_out_channels'], out_channels=self.hparams['conv2_out_channels'],
+            #     kernel_size=self.hparams['conv2_kernel'],
+            #     stride=self.hparams['conv2_stride'],
+            #     padding=self.hparams['conv2_padding']
+            # ),
+            # # nn.BatchNorm2d(self.hparams['conv2_out_channels']),
+            # nn.ELU(),
+            # nn.MaxPool2d(
+            #     kernel_size=self.hparams['conv2_pooling_kernel'],
+            #     stride=None,
+            #     padding=0
+            # ),
+            # nn.Dropout(p=self.hparams['conv2_dropout']),
 
             # Layer 3
-            nn.Conv2d(
-                in_channels=self.hparams['conv2_out_channels'], out_channels=self.hparams['conv3_out_channels'],
-                kernel_size=self.hparams['conv3_kernel'],
-                stride=self.hparams['conv3_stride'],
-                padding=self.hparams['conv3_padding']
-            ),
-            nn.ELU(),
-            nn.MaxPool2d(
-                kernel_size=self.hparams['conv3_pooling_kernel'],
-                stride=None,
-                padding=0
-            ),
-            nn.Dropout(p=self.hparams['conv3_dropout']),
+            # nn.Conv2d(
+            #     in_channels=self.hparams['conv2_out_channels'], out_channels=self.hparams['conv3_out_channels'],
+            #     kernel_size=self.hparams['conv3_kernel'],
+            #     stride=self.hparams['conv3_stride'],
+            #     padding=self.hparams['conv3_padding']
+            # ),
+            # # nn.BatchNorm2d(self.hparams['conv3_out_channels']),
+            # nn.ELU(),
+            # nn.MaxPool2d(
+            #     kernel_size=self.hparams['conv3_pooling_kernel'],
+            #     stride=None,
+            #     padding=0
+            # ),
+            # nn.Dropout(p=self.hparams['conv3_dropout']),
 
             # Layer 4
-            nn.Conv2d(
-                in_channels=self.hparams['conv3_out_channels'], out_channels=self.hparams['conv4_out_channels'],
-                kernel_size=self.hparams['conv4_kernel'],
-                stride=self.hparams['conv4_stride'],
-                padding=self.hparams['conv4_padding']
-            ),
-            nn.ELU(),
-            nn.MaxPool2d(
-                kernel_size=self.hparams['conv4_pooling_kernel'],
-                stride=None,
-                padding=0
-            ),
-            nn.Dropout(p=self.hparams['conv4_dropout']),
+            # nn.Conv2d(
+            #     in_channels=self.hparams['conv3_out_channels'], out_channels=self.hparams['conv4_out_channels'],
+            #     kernel_size=self.hparams['conv4_kernel'],
+            #     stride=self.hparams['conv4_stride'],
+            #     padding=self.hparams['conv4_padding']
+            # ),
+            # # nn.BatchNorm2d(self.hparams['conv4_out_channels']),
+            # nn.ELU(),
+            # nn.MaxPool2d(
+            #     kernel_size=self.hparams['conv4_pooling_kernel'],
+            #     stride=None,
+            #     padding=0
+            # ),
+            # nn.Dropout(p=self.hparams['conv4_dropout']),
 
             # Linear layers
             nn.Flatten(),
 
-            nn.Linear( dim_out_max4 * dim_out_max4 * self.hparams['conv4_out_channels'], self.hparams['linear_weights']),
-            nn.ELU(),
-            nn.Dropout(p=0.5),
+            # nn.Linear( dim_out_max2 * dim_out_max2 * self.hparams['conv2_out_channels'], self.hparams['linear_weights']),
+            # # nn.BatchNorm1d(self.hparams['linear_weights']),
+            # nn.ELU(),
+            # nn.Dropout(p=0.5),
 
-            nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
-            nn.ELU(),
-            nn.Dropout(p=0.6),
+            # nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
+            # # nn.BatchNorm1d(self.hparams['linear_weights']),
+            # nn.ELU(),
+            # nn.Dropout(p=0.6),
 
             # Final output layer
-            nn.Linear( self.hparams['linear_weights'], self.hparams['output_size'])
+            nn.Linear( dim_out_max1 * dim_out_max1 * self.hparams['conv1_out_channels'], self.hparams['output_size'])
         )
 
         # Believe you need to set the optimizer after the network has been defined, else self.parameters()
         # is an empty generator
         self.set_optimizer()
+
+        # Initialize the weights for the linear layers
+        # with torch.no_grad():
+        #     for model in self.model:
+        #         if type(model) == nn.Linear:
+        #             # print(model.bias)
+        #             torch.nn.init.kaiming_uniform_(
+        #                 model.weight, nonlinearity='relu')
+        #             # model.bias.data.fill_(0.01)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
