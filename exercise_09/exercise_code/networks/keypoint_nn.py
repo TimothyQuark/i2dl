@@ -10,11 +10,11 @@ class KeypointModel(nn.Module):
         Initialize your model from a given dict containing all your hparams
         Warning: Don't change the method declaration (i.e. by adding more
             arguments), otherwise it might not work on the submission server
-            
+
         """
         super().__init__()
         self.hparams = hparams
-        
+
         ########################################################################
         # TODO: Define all the layers of your CNN, the only requirements are:  #
         # 1. The network takes in a batch of images of shape (Nx1x96x96)       #
@@ -32,16 +32,39 @@ class KeypointModel(nn.Module):
         # You're going probably try different architecutres, and that will     #
         # allow you to be quick and flexible.                                  #
         ########################################################################
-        
 
-        pass
+
+
+
+        self.device = hparams.get("device", torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"))
+
+
+        # TODO: maxpooling, dropout, init weights for linear layer, batchnorm
+        # TODO: Probably a good idea to rescale input too be much smaller so we can have more layers. Use maxpool straight away?
+
+        # Calculate input dimensions of linear layer. Needs to be of type int
+        dim = (self.hparams['input_size'] + 2 * self.hparams['conv1_padding'] - self.hparams['conv1_kernel'] ) // self.hparams['conv1_stride'] + 1
+        self.model = nn.Sequential(
+            nn.Conv2d(
+                in_channels=1, out_channels=self.hparams['conv1_out_channels'], kernel_size=self.hparams['conv1_kernel'],
+                stride=self.hparams['conv1_stride'], padding=self.hparams['conv1_padding'], bias=True),
+            nn.ReLU(),
+
+            nn.Flatten(),
+            nn.Linear( dim * dim * self.hparams['conv1_out_channels'], self.hparams['output_size'])
+        )
+
+        # Believe you need to set the optimizer after the network has been defined, else self.parameters()
+        # is an empty generator
+        self.set_optimizer()
 
         ########################################################################
         #                           END OF YOUR CODE                           #
         ########################################################################
 
     def forward(self, x):
-        
+
         # check dimensions to use show_keypoint_predictions later
         if x.dim() == 3:
             x = torch.unsqueeze(x, 0)
@@ -53,12 +76,61 @@ class KeypointModel(nn.Module):
         ########################################################################
 
 
-        pass
+        return self.model(x)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
         ########################################################################
         return x
+
+    # Timm code starts here
+    def set_optimizer(self):
+
+        self.optimizer = None
+        self.optimizer = torch.optim.Adam(self.parameters(),
+                                          lr=self.hparams['learning_rate'],
+                                          weight_decay=self.hparams["weight_decay"]
+                                          )
+
+    def training_step(self, batch, loss_func):
+
+        # batch is a dict: {'image', 'keypoints'}
+        # Set the model to train
+        self.model.train()
+
+        self.optimizer.zero_grad() # Reset the gradient for every batch
+        images = batch['image'] # get images of the batch
+        keypoints = batch['keypoints'] # get keypoints of the batch
+        keypoints = keypoints.view(images.shape[0], -1)  # Flatten keypoints from XY coords to a vector
+        # Send data to device, set images to device data
+        images = images.to(self.device)
+
+        pred = self.forward(images) # Send the 2D image to the model
+
+        loss = loss_func(pred, keypoints) # Compute loss of model predictions to actual keypoints (ground truth)
+        loss.backward() # Stage 2: Backward
+        self.optimizer.step() # Stage 3: Update Parameters
+
+        return loss
+
+    def validation_step(self, batch, loss_func):
+
+        loss = 0
+
+        # Set model to eval
+        self.model.eval()
+        with torch.no_grad():
+            images = batch['image']
+            images.to(self.device)
+            keypoints = batch['keypoints']
+            keypoints = keypoints.view(images.shape[0], -1)  # Flatten keypoints from XY coords to a vector
+
+            pred = self.forward(images)
+            loss = loss_func(pred, keypoints)
+
+        return loss
+
+    # Timm code ends here
 
 
 class DummyKeypointModel(nn.Module):
