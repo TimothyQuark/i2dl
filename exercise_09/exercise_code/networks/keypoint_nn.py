@@ -174,14 +174,15 @@ class KeypointModel(nn.Module):
             #     stride=self.hparams['conv4_stride'],
             #     padding=self.hparams['conv4_padding']
             # ),
-            # # nn.BatchNorm2d(self.hparams['conv4_out_channels']),
-            # nn.ELU(),
+            # nn.BatchNorm2d(self.hparams['conv4_out_channels']),
+            # nn.ReLU(),
+            # # nn.Dropout(p=self.hparams['conv4_dropout']),
             # nn.MaxPool2d(
             #     kernel_size=self.hparams['conv4_pooling_kernel'],
             #     stride=None,
             #     padding=0
             # ),
-            # nn.Dropout(p=self.hparams['conv4_dropout']),
+
 
             # Linear layers
             nn.Flatten(),
@@ -191,9 +192,9 @@ class KeypointModel(nn.Module):
             nn.ReLU(),
             # nn.Dropout(p=self.hparams['linear_dropout']),
 
-            # nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
-            # # nn.BatchNorm1d(self.hparams['linear_weights']),
-            # nn.ELU(),
+            nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
+            nn.BatchNorm1d(self.hparams['linear_weights']),
+            nn.ReLU(),
             # nn.Dropout(p=0.6),
 
             # Final output layer
@@ -205,14 +206,20 @@ class KeypointModel(nn.Module):
         # is an empty generator
         self.set_optimizer()
 
-        # Initialize the weights for the linear layers
-        with torch.no_grad():
-            for layer in self.model:
-                if type(layer) == nn.Linear:
-                    # print(model.bias)
-                    torch.nn.init.kaiming_uniform_(
-                        layer.weight, nonlinearity='relu')
-                    # model.bias.data.fill_(0.01)
+        # Initialize the weights for the linear layers.
+        # See https://stackoverflow.com/questions/48529625/in-pytorch-how-are-layer-weights-and-biases-initialized-by-default
+        # with torch.no_grad():
+        #     # We overwrite final linear layer
+        #     for layer in self.model:
+        #         if type(layer) in [nn.Linear, nn.Conv2d]:
+        #             # print(model.bias)
+        #             torch.nn.init.kaiming_uniform_(
+        #                 layer.weight, nonlinearity='relu')
+        #             # model.bias.data.fill_(0.01) # Bias is uniform distribution, no need to change I think
+        #     # Last layer uses tanh as activation function, so use xavier
+        #     torch.nn.init.xavier_uniform_(
+        #                 self.model[-2].weight
+        #     )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
