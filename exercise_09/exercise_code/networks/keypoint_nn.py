@@ -176,7 +176,7 @@ class KeypointModel(nn.Module):
             # ),
             # nn.BatchNorm2d(self.hparams['conv4_out_channels']),
             # nn.ReLU(),
-            # # nn.Dropout(p=self.hparams['conv4_dropout']),
+            # nn.Dropout(p=self.hparams['conv4_dropout']),
             # nn.MaxPool2d(
             #     kernel_size=self.hparams['conv4_pooling_kernel'],
             #     stride=None,
