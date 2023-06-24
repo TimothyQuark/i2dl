@@ -124,7 +124,7 @@ class KeypointModel(nn.Module):
                 padding=self.hparams['conv1_padding']
             ),
             nn.BatchNorm2d(self.hparams['conv1_out_channels']),
-            nn.ELU(),
+            nn.ReLU(),
             # nn.Dropout(p=self.hparams['conv1_dropout']),
             nn.MaxPool2d(
                 kernel_size=self.hparams['conv1_pooling_kernel'],
@@ -141,7 +141,7 @@ class KeypointModel(nn.Module):
                 padding=self.hparams['conv2_padding']
             ),
             nn.BatchNorm2d(self.hparams['conv2_out_channels']),
-            nn.ELU(),
+            nn.ReLU(),
             # nn.Dropout(p=self.hparams['conv2_dropout']),
             nn.MaxPool2d(
                 kernel_size=self.hparams['conv2_pooling_kernel'],
@@ -158,7 +158,7 @@ class KeypointModel(nn.Module):
                 padding=self.hparams['conv3_padding']
             ),
             nn.BatchNorm2d(self.hparams['conv3_out_channels']),
-            nn.ELU(),
+            nn.ReLU(),
             # nn.Dropout(p=self.hparams['conv3_dropout']),
             nn.MaxPool2d(
                 kernel_size=self.hparams['conv3_pooling_kernel'],
@@ -188,7 +188,7 @@ class KeypointModel(nn.Module):
 
             nn.Linear( dim_out_max3 * dim_out_max3 * self.hparams['conv3_out_channels'], self.hparams['linear_weights']),
             nn.BatchNorm1d(self.hparams['linear_weights']),
-            nn.ELU(),
+            nn.ReLU(),
             # nn.Dropout(p=self.hparams['linear_dropout']),
 
             # nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
@@ -197,7 +197,8 @@ class KeypointModel(nn.Module):
             # nn.Dropout(p=0.6),
 
             # Final output layer
-            nn.Linear( self.hparams['linear_weights'], self.hparams['output_size'])
+            nn.Linear( self.hparams['linear_weights'], self.hparams['output_size']),
+            nn.Tanh() # Normalize output to -1 +1 (images are normalized)
         )
 
         # Believe you need to set the optimizer after the network has been defined, else self.parameters()
@@ -205,13 +206,13 @@ class KeypointModel(nn.Module):
         self.set_optimizer()
 
         # Initialize the weights for the linear layers
-        # with torch.no_grad():
-        #     for model in self.model:
-        #         if type(model) == nn.Linear:
-        #             # print(model.bias)
-        #             torch.nn.init.kaiming_uniform_(
-        #                 model.weight, nonlinearity='relu')
-        #             # model.bias.data.fill_(0.01)
+        with torch.no_grad():
+            for layer in self.model:
+                if type(layer) == nn.Linear:
+                    # print(model.bias)
+                    torch.nn.init.kaiming_uniform_(
+                        layer.weight, nonlinearity='relu')
+                    # model.bias.data.fill_(0.01)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
