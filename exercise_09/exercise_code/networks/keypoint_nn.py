@@ -190,12 +190,12 @@ class KeypointModel(nn.Module):
             nn.Linear( dim_out_max3 * dim_out_max3 * self.hparams['conv3_out_channels'], self.hparams['linear_weights']),
             nn.BatchNorm1d(self.hparams['linear_weights']),
             nn.ReLU(),
-            # nn.Dropout(p=self.hparams['linear_dropout']),
+            nn.Dropout(p=self.hparams['linear_dropout']),
 
             nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
             nn.BatchNorm1d(self.hparams['linear_weights']),
             nn.ReLU(),
-            # nn.Dropout(p=0.6),
+            nn.Dropout(p=self.hparams['linear_dropout']),
 
             # Final output layer
             nn.Linear( self.hparams['linear_weights'], self.hparams['output_size']),
