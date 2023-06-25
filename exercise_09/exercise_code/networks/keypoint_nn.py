@@ -208,18 +208,18 @@ class KeypointModel(nn.Module):
 
         # Initialize the weights for the linear layers.
         # See https://stackoverflow.com/questions/48529625/in-pytorch-how-are-layer-weights-and-biases-initialized-by-default
-        with torch.no_grad():
-            # We overwrite final linear layer
-            for layer in self.model:
-                if type(layer) in [nn.Linear, nn.Conv2d]:
-                    # print(model.bias)
-                    torch.nn.init.kaiming_uniform_(
-                        layer.weight, nonlinearity='relu')
-                    # model.bias.data.fill_(0.01) # Bias is uniform distribution, no need to change I think
-            # Last layer uses tanh as activation function, so use xavier
-            torch.nn.init.xavier_normal_(
-                        self.model[-2].weight
-            )
+        # with torch.no_grad():
+        #     # We overwrite final linear layer
+        #     for layer in self.model:
+        #         if type(layer) in [nn.Linear, nn.Conv2d]:
+        #             # print(model.bias)
+        #             torch.nn.init.kaiming_uniform_(
+        #                 layer.weight, nonlinearity='relu')
+        #             # model.bias.data.fill_(0.01) # Bias is uniform distribution, no need to change I think
+        #     # Last layer uses tanh as activation function, so use xavier
+        #     torch.nn.init.xavier_normal_(
+        #                 self.model[-2].weight
+        #     )
 
         ########################################################################
         #                           END OF YOUR CODE                           #
