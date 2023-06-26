@@ -69,6 +69,8 @@ def weights_init(m):
     elif isinstance(m, nn.BatchNorm2d):
         nn.init.constant_(m.weight, 1)
         nn.init.constant_(m.bias, 0)
+    elif isinstance(m, nn.Linear):
+        torch.nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
 
 # Output dimensions of maxpool layer
 
@@ -116,43 +118,42 @@ class KeypointModel(nn.Module):
         # allow you to be quick and flexible.                                  #
         ########################################################################
 
-        # TODO: Weight initialization and batchnorms
-
         self.device = hparams.get("device", torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"))
-
-        # Calculate out dimension of final convolution layer
-        conv_dim = dim_out_conv(input_dim=256,
-                                kernel=3,
-                                stride=1,
-                                padding=1
-                                )
-        max_dim = dim_out_maxpool(input_dim=conv_dim)
 
         # Model loosely based on https://arxiv.org/pdf/1710.00977.pdf
 
         self.model = nn.Sequential(
 
             # Using a stride of 1 to allow overlapping of kernels, and then maxpool to reduce dimensionality
+            # Don't think we need padding here?
 
-            conv_b(1, 32, 3, 1, 1),
-            conv_b(32, 64, 3, 1, 1),
-            conv_b(64, 128, 3, 1, 1),
+            conv_b(1, 64, 5, 1, 0, dropout_p=0.1, dropout_flag=False),
+            conv_b(64, 128, 3, 1, 0, dropout_p=0.1, dropout_flag=False),
+            conv_b(128, 256, 2, 1, 0, dropout_p=0.1, dropout_flag=False),
+            conv_b(256, 512, 2, 1, 0, dropout_p=0.1, dropout_flag=False),
             # Print_layer(),
 
             nn.Flatten(),
-            linear_b(12 * 12 * 128, 256), # Figure out dimensions by printing out last conv layer
-            linear_b(256, 30, active_flag=False,
-                     dropout_flag=False, norm_flag=False)
+            # Figure out dimensions by printing out last conv layer
+            linear_b(4 * 4 * 512, 128, dropout_p=0.2, dropout_flag=False),
+            linear_b(128, 128, dropout_p=0.2, dropout_flag=False),
+            linear_b(128, 30, active_flag=False,
+                     dropout_flag=False, norm_flag=False),
+            nn.Tanh() # Normalize output to -1 +1 (images are normalized)
 
         )
         # print (self.model)
+
+        # All linear layers init with kaiming, but last layer is tanh, so fix it
+        with torch.no_grad():
+            torch.nn.init.xavier_normal_(self.model[-2][0].weight)
 
         # Believe you need to set the optimizer after the network has been defined, else self.parameters()
         # is an empty generator
         self.set_optimizer()
 
-        # self.apply(weights_init)
+        self.apply(weights_init)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
