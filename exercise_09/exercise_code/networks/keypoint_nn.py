@@ -128,32 +128,34 @@ class KeypointModel(nn.Module):
             # Using a stride of 1 to allow overlapping of kernels, and then maxpool to reduce dimensionality
             # Don't think we need padding here?
 
-            conv_b(1, 64, 5, 1, 0, dropout_p=0.1, dropout_flag=False),
-            conv_b(64, 128, 3, 1, 0, dropout_p=0.1, dropout_flag=False),
-            conv_b(128, 256, 2, 1, 0, dropout_p=0.1, dropout_flag=False),
-            conv_b(256, 512, 2, 1, 0, dropout_p=0.1, dropout_flag=False),
+            conv_b(1, 32, 5, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=True),
+            conv_b(32, 64, 3, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=True),
+            conv_b(64, 128, 2, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=True),
+            # conv_b(128, 256, 2, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=False),
             # Print_layer(),
 
             nn.Flatten(),
             # Figure out dimensions by printing out last conv layer
-            linear_b(4 * 4 * 512, 500, dropout_p=0.2, dropout_flag=False),
-            linear_b(500, 256, dropout_p=0.2, dropout_flag=False),
-            linear_b(256, 30, active_flag=False,
+            linear_b(10 * 10 * 128, 128, dropout_p=0.5, dropout_flag=False),
+            linear_b(128, 128, dropout_p=0.2, dropout_flag=False),
+            linear_b(128, 30, active_flag=False,
                      dropout_flag=False, norm_flag=False),
             nn.Tanh() # Normalize output to -1 +1 (images are normalized)
 
         )
-        print (self.model)
+        # print (self.model)
 
-        # All linear layers init with kaiming, but last layer is tanh, so fix it
-        with torch.no_grad():
-            torch.nn.init.xavier_normal_(self.model[-2][0].weight)
+        # For some reason, initializing with PyTorch basic weights results in better loss (ALWAYS, not just randomly).
+        # self.apply(weights_init)
+        # # All linear layers init with kaiming, but last layer is tanh, so fix it
+        # with torch.no_grad():
+        #     torch.nn.init.xavier_normal_(self.model[-2][0].weight)
 
         # Believe you need to set the optimizer after the network has been defined, else self.parameters()
         # is an empty generator
         self.set_optimizer()
 
-        self.apply(weights_init)
+
 
         ########################################################################
         #                           END OF YOUR CODE                           #
