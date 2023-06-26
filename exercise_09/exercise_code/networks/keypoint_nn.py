@@ -136,14 +136,14 @@ class KeypointModel(nn.Module):
 
             nn.Flatten(),
             # Figure out dimensions by printing out last conv layer
-            linear_b(4 * 4 * 512, 128, dropout_p=0.2, dropout_flag=False),
-            linear_b(128, 128, dropout_p=0.2, dropout_flag=False),
-            linear_b(128, 30, active_flag=False,
+            linear_b(4 * 4 * 512, 500, dropout_p=0.2, dropout_flag=False),
+            linear_b(500, 256, dropout_p=0.2, dropout_flag=False),
+            linear_b(256, 30, active_flag=False,
                      dropout_flag=False, norm_flag=False),
             nn.Tanh() # Normalize output to -1 +1 (images are normalized)
 
         )
-        # print (self.model)
+        print (self.model)
 
         # All linear layers init with kaiming, but last layer is tanh, so fix it
         with torch.no_grad():
