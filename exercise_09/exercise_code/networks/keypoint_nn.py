@@ -5,18 +5,89 @@ import torch.nn as nn
 
 # Timm helper functions
 
+# For debugging
+
+
+class Print_layer(nn.Module):
+    def forward(self, x):
+        print(x.shape)
+        return x
+
+
+def conv_b(
+    in_channels,
+    out_channels,
+    kernel_size=3,
+    stride=1,
+    padding=0,
+    dropout_p=0.1,
+    active_flag=True,
+    norm_flag=True,
+    dropout_flag=True,
+    maxpool_flag=True
+):
+    layers = nn.ModuleList([nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
+                           kernel_size=kernel_size, stride=stride, padding=padding)])
+    if norm_flag:
+        layers.append(nn.BatchNorm2d(out_channels))
+    if active_flag:
+        layers.append(nn.ReLU())
+    if dropout_flag:
+        layers.append(nn.Dropout2d(p=dropout_p))
+    if maxpool_flag:
+        layers.append(nn.MaxPool2d(2))
+
+    return nn.Sequential(*layers)
+
+
+def linear_b(
+    in_features,
+    out_features,
+    dropout_p=0.1,
+    active_flag=True,
+    norm_flag=True,
+    dropout_flag=True,
+):
+    layers = nn.ModuleList(
+        [nn.Linear(in_features=in_features, out_features=out_features)])
+    if norm_flag:
+        layers.append(nn.BatchNorm1d(out_features))
+    if active_flag:
+        layers.append(nn.ReLU())
+    if dropout_flag:
+        layers.append(nn.Dropout(p=dropout_p))
+
+    return nn.Sequential(*layers)
+
+
+def weights_init(m):
+    # TODO: weight init for linear layers
+    if isinstance(m, nn.Conv2d):
+        nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
+        if m.bias is not None:
+            m.bias.data.zero_()
+    elif isinstance(m, nn.BatchNorm2d):
+        nn.init.constant_(m.weight, 1)
+        nn.init.constant_(m.bias, 0)
+
 # Output dimensions of maxpool layer
-def dim_out_maxpool(input_dim, kernel, stride=None, padding=0, dilation=1):
+
+
+def dim_out_maxpool(input_dim, kernel=2, stride=None, padding=0, dilation=1):
     if stride == None:
         stride = kernel
     return (input_dim + 2 * padding - dilation * (kernel - 1) - 1) // stride + 1
 
 # Output dimensions of convolution layer
+
+
 def dim_out_conv(input_dim, kernel, stride=1, padding=0, dilation=1):
-    return (input_dim + 2 * padding - dilation *( kernel -1 ) - 1) // stride + 1
+    return (input_dim + 2 * padding - dilation * (kernel - 1) - 1) // stride + 1
+
 
 class KeypointModel(nn.Module):
     """Facial keypoint detection model"""
+
     def __init__(self, hparams):
         """
         Initialize your model from a given dict containing all your hparams
@@ -45,181 +116,43 @@ class KeypointModel(nn.Module):
         # allow you to be quick and flexible.                                  #
         ########################################################################
 
-
         # TODO: Weight initialization and batchnorms
 
         self.device = hparams.get("device", torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"))
 
-
-        # TODO: maxpooling, dropout, init weights for linear layer, batchnorm
-        # TODO: Probably a good idea to rescale input too be much smaller so we can have more layers. Use maxpool straight away?
-
-        # Calculate out dimensions of input maxpool
-        dim_out_maxin = dim_out_maxpool(
-            input_dim=self.hparams['input_size'],
-            kernel=self.hparams['input_pool_kernel'],
-            stride=None,
-            padding=self.hparams['input_pool_padding']
-        )
-
-        # Calculate out dimension of first convolution layer
-        dim_out_conv1 = dim_out_conv(input_dim=dim_out_maxin,
-                                     kernel=self.hparams['conv1_kernel'],
-                                     stride=self.hparams['conv1_stride'],
-                                     padding=self.hparams['conv1_padding'])
-        dim_out_max1 = dim_out_maxpool(
-            input_dim=dim_out_conv1,
-            kernel=self.hparams['conv1_pooling_kernel'],
-        )
-
-        # Calculate out dimension of second convolution layer
-        dim_out_conv2 = dim_out_conv(input_dim=dim_out_max1,
-                                     kernel=self.hparams['conv2_kernel'],
-                                     stride=self.hparams['conv2_stride'],
-                                     padding=self.hparams['conv2_padding'])
-        dim_out_max2 = dim_out_maxpool(
-            input_dim=dim_out_conv2,
-            kernel=self.hparams['conv2_pooling_kernel'],
-        )
-
-        # Calculate out dimension of third convolution layer
-        dim_out_conv3 = dim_out_conv(input_dim=dim_out_max2,
-                                     kernel=self.hparams['conv3_kernel'],
-                                     stride=self.hparams['conv3_stride'],
-                                     padding=self.hparams['conv3_padding'])
-        dim_out_max3 = dim_out_maxpool(
-            input_dim=dim_out_conv3,
-            kernel=self.hparams['conv3_pooling_kernel'],
-        )
-
-
-        # Calculate out dimension of fourth convolution layer
-        # dim_out_conv4 = dim_out_conv(input_dim=dim_out_max3,
-        #                              kernel=self.hparams['conv4_kernel'],
-        #                              stride=self.hparams['conv4_stride'],
-        #                              padding=self.hparams['conv4_padding'])
-        # dim_out_max4 = dim_out_maxpool(
-        #     input_dim=dim_out_conv4,
-        #     kernel=self.hparams['conv4_pooling_kernel'],
-        # )
-
+        # Calculate out dimension of final convolution layer
+        conv_dim = dim_out_conv(input_dim=256,
+                                kernel=3,
+                                stride=1,
+                                padding=1
+                                )
+        max_dim = dim_out_maxpool(input_dim=conv_dim)
 
         # Model loosely based on https://arxiv.org/pdf/1710.00977.pdf
 
         self.model = nn.Sequential(
 
-            # Because we have a limited num of parameters, we will need to maxpool the input already
-            nn.MaxPool2d(
-                kernel_size=self.hparams['input_pool_kernel'],
-                stride=None,
-                padding=self.hparams['input_pool_padding']
-            ),
+            # Using a stride of 1 to allow overlapping of kernels, and then maxpool to reduce dimensionality
 
-            # Layer 1
-            nn.Conv2d(
-                in_channels=1, out_channels=self.hparams['conv1_out_channels'],
-                kernel_size=self.hparams['conv1_kernel'],
-                stride=self.hparams['conv1_stride'],
-                padding=self.hparams['conv1_padding']
-            ),
-            nn.BatchNorm2d(self.hparams['conv1_out_channels']),
-            nn.ReLU(),
-            # nn.Dropout(p=self.hparams['conv1_dropout']),
-            nn.MaxPool2d(
-                kernel_size=self.hparams['conv1_pooling_kernel'],
-                stride=None,
-                padding=0
-            ),
+            conv_b(1, 32, 3, 1, 1),
+            conv_b(32, 64, 3, 1, 1),
+            conv_b(64, 128, 3, 1, 1),
+            # Print_layer(),
 
-
-            # Layer 2
-            nn.Conv2d(
-                in_channels=self.hparams['conv1_out_channels'], out_channels=self.hparams['conv2_out_channels'],
-                kernel_size=self.hparams['conv2_kernel'],
-                stride=self.hparams['conv2_stride'],
-                padding=self.hparams['conv2_padding']
-            ),
-            nn.BatchNorm2d(self.hparams['conv2_out_channels']),
-            nn.ReLU(),
-            # nn.Dropout(p=self.hparams['conv2_dropout']),
-            nn.MaxPool2d(
-                kernel_size=self.hparams['conv2_pooling_kernel'],
-                stride=None,
-                padding=0
-            ),
-
-
-            # Layer 3
-            nn.Conv2d(
-                in_channels=self.hparams['conv2_out_channels'], out_channels=self.hparams['conv3_out_channels'],
-                kernel_size=self.hparams['conv3_kernel'],
-                stride=self.hparams['conv3_stride'],
-                padding=self.hparams['conv3_padding']
-            ),
-            nn.BatchNorm2d(self.hparams['conv3_out_channels']),
-            nn.ReLU(),
-            # nn.Dropout(p=self.hparams['conv3_dropout']),
-            nn.MaxPool2d(
-                kernel_size=self.hparams['conv3_pooling_kernel'],
-                stride=None,
-                padding=0
-            ),
-
-
-            # Layer 4
-            # nn.Conv2d(
-            #     in_channels=self.hparams['conv3_out_channels'], out_channels=self.hparams['conv4_out_channels'],
-            #     kernel_size=self.hparams['conv4_kernel'],
-            #     stride=self.hparams['conv4_stride'],
-            #     padding=self.hparams['conv4_padding']
-            # ),
-            # nn.BatchNorm2d(self.hparams['conv4_out_channels']),
-            # nn.ReLU(),
-            # nn.Dropout(p=self.hparams['conv4_dropout']),
-            # nn.MaxPool2d(
-            #     kernel_size=self.hparams['conv4_pooling_kernel'],
-            #     stride=None,
-            #     padding=0
-            # ),
-
-
-            # Linear layers
             nn.Flatten(),
+            linear_b(12 * 12 * 128, 256), # Figure out dimensions by printing out last conv layer
+            linear_b(256, 30, active_flag=False,
+                     dropout_flag=False, norm_flag=False)
 
-            nn.Linear( dim_out_max3 * dim_out_max3 * self.hparams['conv3_out_channels'], self.hparams['linear_weights']),
-            nn.BatchNorm1d(self.hparams['linear_weights']),
-            nn.ReLU(),
-            nn.Dropout(p=self.hparams['linear_dropout']),
-
-            nn.Linear( self.hparams['linear_weights'], self.hparams['linear_weights']),
-            nn.BatchNorm1d(self.hparams['linear_weights']),
-            nn.ReLU(),
-            nn.Dropout(p=self.hparams['linear_dropout']),
-
-            # Final output layer
-            nn.Linear( self.hparams['linear_weights'], self.hparams['output_size']),
-            nn.Tanh() # Normalize output to -1 +1 (images are normalized)
         )
+        # print (self.model)
 
         # Believe you need to set the optimizer after the network has been defined, else self.parameters()
         # is an empty generator
         self.set_optimizer()
 
-        # Initialize the weights for the linear layers.
-        # See https://stackoverflow.com/questions/48529625/in-pytorch-how-are-layer-weights-and-biases-initialized-by-default
-        with torch.no_grad():
-            # We overwrite final linear layer
-            for layer in self.model:
-                if type(layer) in [nn.Linear, nn.Conv2d]:
-                    # print(model.bias)
-                    torch.nn.init.kaiming_uniform_(
-                        layer.weight, nonlinearity='relu')
-                    # model.bias.data.fill_(0.01) # Bias is uniform distribution, no need to change I think
-            # Last layer uses tanh as activation function, so use xavier
-            torch.nn.init.xavier_normal_(
-                        self.model[-2].weight
-            )
+        # self.apply(weights_init)
 
         ########################################################################
         #                           END OF YOUR CODE                           #
@@ -236,7 +169,6 @@ class KeypointModel(nn.Module):
         # corresponding predicted keypoints.                                   #
         # NOTE: what is the required output size?                              #
         ########################################################################
-
 
         return self.model(x)
 
@@ -260,18 +192,20 @@ class KeypointModel(nn.Module):
         # Set the model to train
         self.model.train()
 
-        self.optimizer.zero_grad() # Reset the gradient for every batch
-        images = batch['image'] # get images of the batch
-        keypoints = batch['keypoints'] # get keypoints of the batch
-        keypoints = keypoints.view(images.shape[0], -1)  # Flatten keypoints from XY coords to a vector
+        self.optimizer.zero_grad()  # Reset the gradient for every batch
+        images = batch['image']  # get images of the batch
+        keypoints = batch['keypoints']  # get keypoints of the batch
+        # Flatten keypoints from XY coords to a vector
+        keypoints = keypoints.view(images.shape[0], -1)
         # Send data to device, set images to device data
         images = images.to(self.device)
 
-        pred = self.forward(images) # Send the 2D image to the model
+        pred = self.forward(images)  # Send the 2D image to the model
 
-        loss = loss_func(pred, keypoints) # Compute loss of model predictions to actual keypoints (ground truth)
-        loss.backward() # Stage 2: Backward
-        self.optimizer.step() # Stage 3: Update Parameters
+        # Compute loss of model predictions to actual keypoints (ground truth)
+        loss = loss_func(pred, keypoints)
+        loss.backward()  # Stage 2: Backward
+        self.optimizer.step()  # Stage 3: Update Parameters
 
         return loss
 
@@ -285,7 +219,8 @@ class KeypointModel(nn.Module):
             images = batch['image']
             images.to(self.device)
             keypoints = batch['keypoints']
-            keypoints = keypoints.view(images.shape[0], -1)  # Flatten keypoints from XY coords to a vector
+            # Flatten keypoints from XY coords to a vector
+            keypoints = keypoints.view(images.shape[0], -1)
 
             pred = self.forward(images)
             loss = loss_func(pred, keypoints)
@@ -297,6 +232,7 @@ class KeypointModel(nn.Module):
 
 class DummyKeypointModel(nn.Module):
     """Dummy model always predicting the keypoints of the first train sample"""
+
     def __init__(self):
         super().__init__()
         self.prediction = torch.tensor([[
