@@ -128,22 +128,34 @@ class KeypointModel(nn.Module):
             # Using a stride of 1 to allow overlapping of kernels, and then maxpool to reduce dimensionality
             # Don't think we need padding here?
 
-            conv_b(1, 32, 5, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=True),
-            conv_b(32, 64, 3, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=True),
-            conv_b(64, 128, 2, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=True),
-            # conv_b(128, 256, 2, 1, 0, dropout_p=0.1, dropout_flag=False, maxpool_flag=False),
+            conv_b(1, 32, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
+            conv_b(32, 32, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
+
+            conv_b(32, 64, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
+            conv_b(64, 64, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
+
+            conv_b(64, 96, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
+            conv_b(96, 96, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
+
+            conv_b(96, 128, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
+            conv_b(128, 128, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
+
+            # conv_b(128, 256, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
+            # conv_b(256, 256, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
+
+            # conv_b(256, 512, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
+            # conv_b(512, 512, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
+
             # Print_layer(),
 
             nn.Flatten(),
             # Figure out dimensions by printing out last conv layer
-            linear_b(10 * 10 * 128, 128, dropout_p=0.5, dropout_flag=False),
-            linear_b(128, 128, dropout_p=0.2, dropout_flag=False),
-            linear_b(128, 30, active_flag=False,
-                     dropout_flag=False, norm_flag=False),
+            linear_b(2 * 2 * 128, 512, dropout_p=0.1, dropout_flag=True),
+            linear_b(512, 30, dropout_p=0.1, active_flag=False, dropout_flag=True, norm_flag=False),
             nn.Tanh() # Normalize output to -1 +1 (images are normalized)
 
         )
-        # print (self.model)
+        print (self.model)
 
         # For some reason, initializing with PyTorch basic weights results in better loss (ALWAYS, not just randomly).
         # self.apply(weights_init)
