@@ -128,6 +128,9 @@ class KeypointModel(nn.Module):
             # Using a stride of 1 to allow overlapping of kernels, and then maxpool to reduce dimensionality
             # Don't think we need padding here?
 
+            # TODO: Need to consider receptive field. So 2 3x3 layers are equivalent to my old 5x5 layer, use
+            # this to create a better model next time.
+
             conv_b(1, 32, 3, 1, 0, dropout_flag=False, maxpool_flag=False),
             conv_b(32, 32, 3, 1, 0, dropout_flag=False, maxpool_flag=True),
 
