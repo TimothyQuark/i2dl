@@ -21,6 +21,10 @@ class ConvLayer(nn.Module):
 
 
 class Print_layer(nn.Module):
+
+    # def __init(self):
+    #     super(Print_layer, self).__init__()
+
     def forward(self, x):
         print(x.shape)
         return x
@@ -120,13 +124,17 @@ class SegmentationNN(nn.Module):
         self.encoder = Encoder(hparams=self.hp) # Feature detector, pretrained
         self.decoder = nn.Sequential(
             nn.MaxPool2d(2),
-            # Print_layer(),
-            nn.Flatten(),
-            # Print_layer(),
-            nn.Linear(4 * 4 * 576, 256),
+            Print_layer(),
+            nn.ConvTranspose2d(in_channels=576, out_channels=64, kernel_size=2, stride=2, padding=0, output_padding=0),
             nn.ReLU(),
-            nn.Dropout(p=0.0),
-            nn.Linear(256, num_classes),
+            nn.Upsample(scale_factor=2),
+            nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=2, stride=2, padding=0, output_padding=0),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2),
+            nn.ConvTranspose2d(in_channels=32, out_channels=num_classes, kernel_size=2, stride=2, padding=0, output_padding=0),
+            nn.ReLU(),
+            nn.Upsample(size = 240),
+            Print_layer(),
         )
 
         self.device = hp.get("device", torch.device(
@@ -173,21 +181,37 @@ class SegmentationNN(nn.Module):
 
     def training_step(self, batch, loss_func):
 
-        # We train the decoder but not the encoder
+        # We train the decoder but not the encoder (may change later)
         self.decoder.train()
 
         self.optimizer.zero_grad() # Reset gradient every batch
 
         images = batch[0].to(self.device)
 
-        labels = batch[1].to(self.device) # Each pixel assigned a label using one hot notation
+        labels = batch[1].to(self.device).unsqueeze(0) # Each pixel assigned a label (ground truth)
 
+        # Pred is batch x num_classifiers x H x W, each pixel assigned a value that it is a
+        # classifier. When evaluating, checks which classifier channel is biggest, and compares to
+        # ground truth (i.e. the labels tensor)
         pred = self.forward(images)
+        _ , pred = torch.max(pred, 1) # We only want the most likely label, i.e. idx and not the value itself
+        pred = pred.unsqueeze(0) # Reshape tensor to same as labels
 
         # Compute loss between model predictions and labels (ground truth)
-        losses = loss_func(pred.unsqueeze(0), labels.unsqueeze(0))
+        loss = loss_func(pred.float(), labels.float()) # Need to return float and not long because CrossEntropyLoss doesn't implement it for long
+        loss.backward()
+        self.optimizer.step()
 
+        return loss
 
+    def _to_one_hot(self, y, num_classes):
+        scatter_dim = len(y.size())
+        y_tensor = y.view(*y.size(), -1)
+        zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype)
+
+        return zeros.scatter(scatter_dim, y_tensor, 1)
+
+        target_image[target_image == -1] = 1
 
 
 
