@@ -2,6 +2,7 @@
 import torch
 import torch.nn as nn
 from torchvision import models
+from torchinfo import summary
 
 
 class ConvLayer(nn.Module):
@@ -21,9 +22,6 @@ class ConvLayer(nn.Module):
 
 
 class Print_layer(nn.Module):
-
-    # def __init(self):
-    #     super(Print_layer, self).__init__()
 
     def forward(self, x):
         print(x.shape)
@@ -84,10 +82,12 @@ def convT_b(
     output_padding=0,
     groups=1,
     dropout_p=0.1,
+    upsample=2,
     active_flag=True,
     norm_flag=True,
     dropout_flag=False,
-    avgpool_flag=True
+    avgpool_flag=False,
+    upsample_flag=True
 ):
     layers = nn.ModuleList([nn.ConvTranspose2d(in_channels=in_channels, out_channels=out_channels,
                            kernel_size=kernel_size, stride=stride, padding=padding, output_padding=output_padding, groups=groups)])
@@ -99,21 +99,23 @@ def convT_b(
         layers.append(nn.Dropout2d(p=dropout_p))
     if avgpool_flag:
         layers.append(nn.AvgPool2d(2))
+    if upsample_flag:
+        layers.append(nn.Upsample(scale_factor=upsample))
 
     return nn.Sequential(*layers)
 
 
-def weights_init(m):
-    # TODO: weight init for linear layers
-    if isinstance(m, nn.Conv2d):
-        nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
-        if m.bias is not None:
-            m.bias.data.zero_()
-    elif isinstance(m, nn.BatchNorm2d):
-        nn.init.constant_(m.weight, 1)
-        nn.init.constant_(m.bias, 0)
-    elif isinstance(m, nn.Linear):
-        torch.nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
+# def weights_init(m):
+#     # TODO: weight init for linear layers
+#     if isinstance(m, nn.Conv2d):
+#         nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
+#         if m.bias is not None:
+#             m.bias.data.zero_()
+#     elif isinstance(m, nn.BatchNorm2d):
+#         nn.init.constant_(m.weight, 1)
+#         nn.init.constant_(m.bias, 0)
+#     elif isinstance(m, nn.Linear):
+#         torch.nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
 
 
 class Encoder(nn.Module):
@@ -124,18 +126,18 @@ class Encoder(nn.Module):
         self.hparams = hparams
 
         # TODO: Try out different pretrained models
-        mobile_model = models.mobilenet_v3_small(weights='DEFAULT', num_classes=23)
-        # print(mobile_model.features)
-
-        self.encoder = mobile_model.features
+        
+        # Submission server may nbot have v3 according to TA
+        # mobilenet = models.mobilenet_v3_small(weights='DEFAULT', num_classes=23)
+        
+        # We on Pytorch 0.12 so only 1 pretrained to choose from
+        self.encoder = models.mobilenet_v2(pretrained=True).features
 
         # Use for debugging
         # self.encoder.append(Print_layer())
-
-        # TODO: Initialize weights
+        # summary(self, input_size=(hparams["batch_size"], 3, 240, 240))
 
     def forward(self, x):
-
         return self.encoder(x)
 
 
@@ -150,16 +152,27 @@ class SegmentationNN(nn.Module):
 
         self.encoder = Encoder(hparams=self.hp) # Feature detector, pretrained
         self.decoder = nn.Sequential(
+            
+            nn.MaxPool2d(2),
+            convT_b(in_channels=1280, out_channels=23 * 16, kernel_size=3, stride=2, padding=1, upsample=2),
+            convT_b(in_channels=23 * 16, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2),
+            convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=1, padding=1, upsample=2),
+            convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2),
+            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample_flag=False),
+            
             # nn.MaxPool2d(2),
-            # conv_b(in_channels=576, out_channels=256, kernel_size=3, stride=1, padding=0),
-            convT_b(in_channels=576, out_channels=256, kernel_size=3, stride=2, padding=1),
-            convT_b(in_channels=256, out_channels=128, kernel_size=3, stride=2, padding=1),
-            convT_b(in_channels=128, out_channels=64, kernel_size=3, stride=2, padding=1),
-            convT_b(in_channels=64, out_channels=num_classes, kernel_size=3, stride=2, padding=1),
-            # Print_layer(),
+            # convT_b(in_channels=1280, out_channels=23 * 16, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
+            # convT_b(in_channels=23 * 16, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
+            # convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
+            # convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
+            # convT_b(in_channels=23 * 2, out_channels=23, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
+            
+            
+            # convT_b(in_channels=576, out_channels=num_classes, kernel_size=1, stride=1, padding=1, avgpool_flag=False),            
+            
             nn.Upsample(size = 240),
             # nn.Softmax(dim=1), # Calculate softmax along dim of classifier
-            # Print_layer(),
+
         )
 
         self.device = hp.get("device", torch.device(
@@ -199,8 +212,12 @@ class SegmentationNN(nn.Module):
     def set_optimizer(self):
 
         self.optimizer = None
+        
+        # Don't train encoder for now
+        for param in self.encoder.parameters():
+            param.requires_grad = False
 
-        # TODO: Set autoencoder and classifier to have their own optimization parameters
+        
         self.optimizer = torch.optim.Adam(self.parameters(),
                                           lr=self.hp['learning_rate'],
                                           weight_decay=self.hp["weight_decay"]
@@ -209,7 +226,9 @@ class SegmentationNN(nn.Module):
 
     def training_step(self, batch, loss_func):
 
-        # We train the decoder but not the encoder (may change later)
+        # We train the decoder but not the encoder (may change later). But train() does not freeze weights,
+        # of encoder, this is done using requires_grad in set_optimizer
+        self.encoder.train()
         self.decoder.train()
 
         self.optimizer.zero_grad() # Reset gradient every batch
