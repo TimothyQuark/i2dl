@@ -44,7 +44,7 @@ def conv_b(
     if norm_flag:
         layers.append(nn.BatchNorm2d(out_channels))
     if active_flag:
-        layers.append(nn.ReLU())
+        layers.append(nn.PReLU())
     if dropout_flag:
         layers.append(nn.Dropout2d(p=dropout_p))
     if maxpool_flag:
@@ -52,25 +52,6 @@ def conv_b(
 
     return nn.Sequential(*layers)
 
-
-def linear_b(
-    in_features,
-    out_features,
-    dropout_p=0.1,
-    active_flag=True,
-    norm_flag=True,
-    dropout_flag=True,
-):
-    layers = nn.ModuleList(
-        [nn.Linear(in_features=in_features, out_features=out_features)])
-    if norm_flag:
-        layers.append(nn.BatchNorm1d(out_features))
-    if active_flag:
-        layers.append(nn.ReLU())
-    if dropout_flag:
-        layers.append(nn.Dropout(p=dropout_p))
-
-    return nn.Sequential(*layers)
 
 def convT_b(
     in_channels,
@@ -93,7 +74,7 @@ def convT_b(
     if norm_flag:
         layers.append(nn.BatchNorm2d(out_channels))
     if active_flag:
-        layers.append(nn.ReLU())
+        layers.append(nn.PReLU())
     if dropout_flag:
         layers.append(nn.Dropout2d(p=dropout_p))
     if avgpool_flag:
@@ -157,10 +138,10 @@ class SegmentationNN(nn.Module):
         self.decoder = nn.Sequential(
             
             nn.MaxPool2d(2),
-            convT_b(in_channels=1280, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
-            convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
-            convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2, norm_flag=True),
-            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=True),          
+            convT_b(in_channels=1280, out_channels=32 * 6, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
+            convT_b(in_channels=32 * 6, out_channels=32 * 5, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
+            convT_b(in_channels=32 * 5, out_channels=32 * 3, kernel_size=3, stride=1, padding=1, upsample=2, norm_flag=True),
+            convT_b(in_channels=32 * 3, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=True),
             
             nn.Upsample(size = 240),
             
@@ -210,9 +191,10 @@ class SegmentationNN(nn.Module):
 
         self.optimizer = None
         
-        # Don't train encoder for now
-        # for param in self.encoder.parameters():
-        #     param.requires_grad = False
+        # Note that training encoder increases model size, so be careful!
+        # Disable this to train encoder
+        for param in self.encoder.parameters():
+            param.requires_grad = False
 
         
         self.optimizer = torch.optim.Adam(self.parameters(),
