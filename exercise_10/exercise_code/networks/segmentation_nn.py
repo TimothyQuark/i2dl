@@ -2,7 +2,6 @@
 import torch
 import torch.nn as nn
 from torchvision import models
-from torchinfo import summary
 
 
 class ConvLayer(nn.Module):
@@ -105,17 +104,17 @@ def convT_b(
     return nn.Sequential(*layers)
 
 
-# def weights_init(m):
-#     # TODO: weight init for linear layers
-#     if isinstance(m, nn.Conv2d):
-#         nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
-#         if m.bias is not None:
-#             m.bias.data.zero_()
-#     elif isinstance(m, nn.BatchNorm2d):
-#         nn.init.constant_(m.weight, 1)
-#         nn.init.constant_(m.bias, 0)
-#     elif isinstance(m, nn.Linear):
-#         torch.nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
+def weights_init(m):
+    # TODO: weight init for linear layers
+    if isinstance(m, nn.Conv2d):
+        nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
+        if m.bias is not None:
+            m.bias.data.zero_()
+    elif isinstance(m, nn.BatchNorm2d):
+        nn.init.constant_(m.weight, 1)
+        nn.init.constant_(m.bias, 0)
+    elif isinstance(m, nn.Linear):
+        torch.nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
 
 
 class Encoder(nn.Module):
@@ -154,10 +153,10 @@ class SegmentationNN(nn.Module):
         self.decoder = nn.Sequential(
             
             nn.MaxPool2d(2),
-            convT_b(in_channels=1280, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=False),
-            convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=False),
-            convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2, norm_flag=False),
-            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=False),
+            convT_b(in_channels=1280, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
+            convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
+            convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2, norm_flag=True),
+            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=True),
             
             # nn.MaxPool2d(2),
             # convT_b(in_channels=1280, out_channels=23 * 16, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
