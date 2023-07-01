@@ -116,6 +116,10 @@ class Encoder(nn.Module):
         
         # We on Pytorch 0.12 so only 1 pretrained to choose from
         self.encoder = models.mobilenet_v2(pretrained=True).features
+        
+        # Sadly feature layer too big for my use case, but could use this in the future
+        # as inspiration for skip connections
+        # self.encoder = models.densenet121(pretrained=True).features
 
         # Use for debugging
         # self.encoder.append(Print_layer())
@@ -136,7 +140,7 @@ class SegmentationNN(nn.Module):
 
         self.encoder = Encoder(hparams=self.hp) # Feature detector, pretrained
         self.decoder = nn.Sequential(
-            
+            Print_layer(),
             nn.MaxPool2d(2),
             convT_b(in_channels=1280, out_channels=32 * 6, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
             convT_b(in_channels=32 * 6, out_channels=32 * 5, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
