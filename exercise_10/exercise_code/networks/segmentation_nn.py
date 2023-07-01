@@ -110,6 +110,10 @@ def weights_init(m):
         nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
         if m.bias is not None:
             m.bias.data.zero_()
+    elif isinstance(m, nn.ConvTranspose2d):
+        nn.init.kaiming_uniform_(m.weight, mode='fan_out', nonlinearity='relu')
+        if m.bias is not None:
+            m.bias.data.zero_()
     elif isinstance(m, nn.BatchNorm2d):
         nn.init.constant_(m.weight, 1)
         nn.init.constant_(m.bias, 0)
@@ -176,6 +180,9 @@ class SegmentationNN(nn.Module):
         self.device = hp.get("device", torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"))
         self.set_optimizer()
+        
+        # Apply for my decoder but not for pretrained encoder!
+        self.decoder.apply(weights_init)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
