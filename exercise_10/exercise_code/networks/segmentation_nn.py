@@ -160,19 +160,11 @@ class SegmentationNN(nn.Module):
             convT_b(in_channels=1280, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
             convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=True),
             convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2, norm_flag=True),
-            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=True),
-            
-            # nn.MaxPool2d(2),
-            # convT_b(in_channels=1280, out_channels=23 * 16, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
-            # convT_b(in_channels=23 * 16, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
-            # convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
-            # convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
-            # convT_b(in_channels=23 * 2, out_channels=23, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
-            
-            
-            # convT_b(in_channels=576, out_channels=num_classes, kernel_size=1, stride=1, padding=1, avgpool_flag=False),            
+            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=True),          
             
             nn.Upsample(size = 240),
+            
+            # Softmax learns super slowly, not sure if it results in something better
             # nn.Softmax(dim=1), # Calculate softmax along dim of classifier
 
         )
@@ -219,8 +211,8 @@ class SegmentationNN(nn.Module):
         self.optimizer = None
         
         # Don't train encoder for now
-        for param in self.encoder.parameters():
-            param.requires_grad = False
+        # for param in self.encoder.parameters():
+        #     param.requires_grad = False
 
         
         self.optimizer = torch.optim.Adam(self.parameters(),
