@@ -39,7 +39,7 @@ def conv_b(
     dropout_p=0.1,
     active_flag=True,
     norm_flag=True,
-    dropout_flag=True,
+    dropout_flag=False,
     maxpool_flag=True
 ):
     layers = nn.ModuleList([nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
@@ -72,6 +72,33 @@ def linear_b(
         layers.append(nn.ReLU())
     if dropout_flag:
         layers.append(nn.Dropout(p=dropout_p))
+
+    return nn.Sequential(*layers)
+
+def convT_b(
+    in_channels,
+    out_channels,
+    kernel_size=3,
+    stride=1,
+    padding=0,
+    output_padding=0,
+    groups=1,
+    dropout_p=0.1,
+    active_flag=True,
+    norm_flag=True,
+    dropout_flag=False,
+    avgpool_flag=True
+):
+    layers = nn.ModuleList([nn.ConvTranspose2d(in_channels=in_channels, out_channels=out_channels,
+                           kernel_size=kernel_size, stride=stride, padding=padding, output_padding=output_padding, groups=groups)])
+    if norm_flag:
+        layers.append(nn.BatchNorm2d(out_channels))
+    if active_flag:
+        layers.append(nn.ReLU())
+    if dropout_flag:
+        layers.append(nn.Dropout2d(p=dropout_p))
+    if avgpool_flag:
+        layers.append(nn.AvgPool2d(2))
 
     return nn.Sequential(*layers)
 
@@ -123,18 +150,16 @@ class SegmentationNN(nn.Module):
 
         self.encoder = Encoder(hparams=self.hp) # Feature detector, pretrained
         self.decoder = nn.Sequential(
-            nn.MaxPool2d(2),
-            Print_layer(),
-            nn.ConvTranspose2d(in_channels=576, out_channels=64, kernel_size=2, stride=2, padding=0, output_padding=0),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2),
-            nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=2, stride=2, padding=0, output_padding=0),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2),
-            nn.ConvTranspose2d(in_channels=32, out_channels=num_classes, kernel_size=2, stride=2, padding=0, output_padding=0),
-            nn.ReLU(),
+            # nn.MaxPool2d(2),
+            # conv_b(in_channels=576, out_channels=256, kernel_size=3, stride=1, padding=0),
+            convT_b(in_channels=576, out_channels=256, kernel_size=3, stride=2, padding=1),
+            convT_b(in_channels=256, out_channels=128, kernel_size=3, stride=2, padding=1),
+            convT_b(in_channels=128, out_channels=64, kernel_size=3, stride=2, padding=1),
+            convT_b(in_channels=64, out_channels=num_classes, kernel_size=3, stride=2, padding=1),
+            # Print_layer(),
             nn.Upsample(size = 240),
-            Print_layer(),
+            # nn.Softmax(dim=1), # Calculate softmax along dim of classifier
+            # Print_layer(),
         )
 
         self.device = hp.get("device", torch.device(
@@ -157,6 +182,9 @@ class SegmentationNN(nn.Module):
         #                             YOUR CODE                               #
         #######################################################################
 
+        # See shape of input
+        # print(x.shape)
+        
         x = self.encoder(x)
         x = self.decoder(x)
 
@@ -186,33 +214,38 @@ class SegmentationNN(nn.Module):
 
         self.optimizer.zero_grad() # Reset gradient every batch
 
-        images = batch[0].to(self.device)
-
-        labels = batch[1].to(self.device).unsqueeze(0) # Each pixel assigned a label (ground truth)
+        images = batch[0].to(self.device) # batch x channels x H x W
+        labels = batch[1].to(self.device) # Each pixel assigned a label (ground truth), batch x H x W
 
         # Pred is batch x num_classifiers x H x W, each pixel assigned a value that it is a
         # classifier. When evaluating, checks which classifier channel is biggest, and compares to
         # ground truth (i.e. the labels tensor)
         pred = self.forward(images)
-        _ , pred = torch.max(pred, 1) # We only want the most likely label, i.e. idx and not the value itself
-        pred = pred.unsqueeze(0) # Reshape tensor to same as labels
 
-        # Compute loss between model predictions and labels (ground truth)
-        loss = loss_func(pred.float(), labels.float()) # Need to return float and not long because CrossEntropyLoss doesn't implement it for long
+        # Compute loss between model predictions and labels (ground truth). For CE loss, pass tensor of batch x num_classes x H x W
+        # it will calculate the loss using the label tensor automatically (no need to do hot encoding or stuff like that myself)
+        loss = loss_func(pred, labels) # Need to return float and not long because CrossEntropyLoss doesn't implement it for long
         loss.backward()
         self.optimizer.step()
 
         return loss
 
-    def _to_one_hot(self, y, num_classes):
-        scatter_dim = len(y.size())
-        y_tensor = y.view(*y.size(), -1)
-        zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype)
-
-        return zeros.scatter(scatter_dim, y_tensor, 1)
-
-        target_image[target_image == -1] = 1
-
+    def validation_step(self, batch, loss_func):
+        
+        loss = 0
+        
+        # Set model to eval
+        self.encoder.eval()
+        self.decoder.eval()
+        
+        with torch.no_grad():
+            images = batch[0].to(self.device)
+            labels = batch[1].to(self.device) # Each pixel assigned a label (ground truth)
+            
+            pred = self.forward(images)
+            loss = loss_func(pred, labels)
+            
+        return loss
 
 
     # Timm code end
