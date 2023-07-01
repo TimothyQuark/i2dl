@@ -154,11 +154,10 @@ class SegmentationNN(nn.Module):
         self.decoder = nn.Sequential(
             
             nn.MaxPool2d(2),
-            convT_b(in_channels=1280, out_channels=23 * 16, kernel_size=3, stride=2, padding=1, upsample=2),
-            convT_b(in_channels=23 * 16, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2),
-            convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=1, padding=1, upsample=2),
-            convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2),
-            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample_flag=False),
+            convT_b(in_channels=1280, out_channels=23 * 8, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=False),
+            convT_b(in_channels=23 * 8, out_channels=23 * 4, kernel_size=3, stride=2, padding=1, upsample=2, norm_flag=False),
+            convT_b(in_channels=23 * 4, out_channels=23 * 2, kernel_size=3, stride=1, padding=1, upsample=2, norm_flag=False),
+            convT_b(in_channels=23 * 2, out_channels=23, kernel_size=1, stride=1, padding=0, upsample=2, norm_flag=False),
             
             # nn.MaxPool2d(2),
             # convT_b(in_channels=1280, out_channels=23 * 16, kernel_size=3, stride=2, padding=1, avgpool_flag=False),
